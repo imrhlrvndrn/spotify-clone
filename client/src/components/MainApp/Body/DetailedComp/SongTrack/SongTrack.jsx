@@ -11,7 +11,9 @@ const PlaylistSong = ({ trackImg, trackName, trackArtists, episodeDescription, l
                 <img src={trackImg} alt={trackName} />
                 <div className='detailedSong__info'>
                     <h1>
-                        #{episodeDescription.episode_count} {trackName}
+                        {episodeDescription?.episode_count &&
+                            `#${episodeDescription?.episode_count} `}
+                        {trackName}
                     </h1>
                     {trackArtists && <p>{trackArtists.map((artist) => artist.name).join(', ')}</p>}
                     {episodeDescription?.description && (

@@ -66,5 +66,12 @@ export default styled.div`
                 font-size: 4rem;
             }
         }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        
     }
 `;

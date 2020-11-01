@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export default styled.div`
     padding: 1rem 0;
     display: flex;
-    align-items: center;
     color: white;
     border-radius: 5px;
     @media ${(props) => props.theme.breakpoints.lg_tablet} {
@@ -16,6 +15,11 @@ export default styled.div`
             opacity: 0.8;
             background-color: rgb(${(props) => props.theme.darkBackground});
         }
+    }
+
+    a {
+        display: flex;
+        width: 100%;
     }
 
     img {
@@ -31,16 +35,24 @@ export default styled.div`
     }
 
     .detailedSong__info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         margin-left: 1rem;
 
         h1 {
+            font-size: 1rem;
             font-weight: 600;
+            margin-bottom: 0.5rem;
         }
 
         p {
             font-size: 0.8rem;
-            margin-top: 0.5rem;
             opacity: 0.6;
         }
+    }
+
+    .description {
+        opacity: 0.6;
     }
 `;

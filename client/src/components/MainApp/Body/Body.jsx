@@ -29,6 +29,7 @@ const Body = ({ match }) => {
               mainAppState === 'track' ||
               mainAppState === 'album' ||
               mainAppState === 'show' ||
+              mainAppState === 'episode' ||
               mainAppState === 'artist' ? (
                 <Route
                     exact

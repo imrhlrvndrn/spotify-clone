@@ -31,7 +31,7 @@ const Search = () => {
                             {searchResults.tracks.items.map((item) => (
                                 <CollectionItem
                                     name={item.name}
-                                    link={`/track/${item.id}`}
+                                    link={`/track/${item?.id}`}
                                     image={item?.album?.images[0]?.url}
                                     artist={item.album.artists
                                         .map((artist) => artist.name)
@@ -46,7 +46,7 @@ const Search = () => {
                             {searchResults.artists.items.map((item) => (
                                 <CollectionItem
                                     name={item.name}
-                                    link={`/artist/${item.id}`}
+                                    link={`/artist/${item?.id}`}
                                     image={item?.images[0]?.url}
                                     type={item.type}
                                     enableType
@@ -60,7 +60,7 @@ const Search = () => {
                             {searchResults.albums.items.map((item) => (
                                 <CollectionItem
                                     name={item.name}
-                                    link={`/album/${item.id}`}
+                                    link={`/album/${item?.id}`}
                                     image={item?.images[0]?.url}
                                     artist={item.artists.map((artist) => artist.name).join(', ')}
                                 />
@@ -73,7 +73,7 @@ const Search = () => {
                             {searchResults.playlists.items.map((item) => (
                                 <CollectionItem
                                     name={item.name}
-                                    link={`/playlist/${item.id}`}
+                                    link={`/playlist/${item?.id}`}
                                     image={item?.images[0]?.url}
                                     artist={item.owner.display_name}
                                 />
@@ -84,7 +84,11 @@ const Search = () => {
                     {searchResults.shows?.items?.length > 0 && (
                         <CollectionContainer title='Podcasts'>
                             {searchResults.shows.items.map((item) => (
-                                <CollectionItem name={item.name} image={item?.images[0]?.url} />
+                                <CollectionItem
+                                    link={`/show/${item?.id}`}
+                                    name={item?.name}
+                                    image={item?.images[0]?.url}
+                                />
                             ))}
                         </CollectionContainer>
                     )}
@@ -92,7 +96,11 @@ const Search = () => {
                     {searchResults.episodes?.items?.length > 0 && (
                         <CollectionContainer title='Episodes'>
                             {searchResults.episodes.items.map((item) => (
-                                <CollectionItem name={item.name} image={item?.images[0]?.url} />
+                                <CollectionItem
+                                    link={`/episode/${item?.id}`}
+                                    name={item?.name}
+                                    image={item?.images[0]?.url}
+                                />
                             ))}
                         </CollectionContainer>
                     )}

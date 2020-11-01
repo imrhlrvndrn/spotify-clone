@@ -1,4 +1,4 @@
-export default const firebaseConfig = {
+const firebaseConfig = {
     apiKey: 'AIzaSyBPOQQbLnqY0TYoXbqmnQdLJKVItZGyGPw',
     authDomain: 'spotify-clone-706b8.firebaseapp.com',
     databaseURL: 'https://spotify-clone-706b8.firebaseio.com',
@@ -7,3 +7,5 @@ export default const firebaseConfig = {
     messagingSenderId: '530451797092',
     appId: '1:530451797092:web:9f63716c7ba6357e6ebb71',
 };
+
+export default firebaseConfig;

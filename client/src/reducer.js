@@ -2,6 +2,7 @@ export const initialState = {
     user: null,
     playlists: [],
     discover_weekly: null,
+    artist_top_tracks: null,
     savedShows: {},
     saved_albums: {},
     followed_artists: {},
@@ -32,6 +33,9 @@ const reducer = (state, action) => {
 
         case 'SET_DISCOVER_WEEKLY':
             return { ...state, discover_weekly: action.discover_weekly };
+
+        case 'SET_ARTIST_TOP_TRACKS':
+            return { ...state, artist_top_tracks: action.artist_top_tracks };
 
         case 'SET_PLAYLIST_ID':
             return { ...state, playlistId: action.playlistId };

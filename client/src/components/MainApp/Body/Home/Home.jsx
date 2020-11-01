@@ -49,6 +49,7 @@ const Home = () => {
                 <CollectionContainer title='Recently played'>
                     {recentlyPlayedTracks.items.map((item) => (
                         <CollectionItem
+                            link={`/track/${item?.track?.id}`}
                             name={
                                 item.track.album.name.length >= 20
                                     ? `${item.track.album.name.substring(0, 20)} ....`
@@ -69,6 +70,7 @@ const Home = () => {
                     {newReleases.items.map((item) => {
                         return (
                             <CollectionItem
+                                link={`/album/${item?.id}`}
                                 name={
                                     item.name.length >= 20
                                         ? `${item.name.substring(0, 20)} ....`
@@ -87,6 +89,7 @@ const Home = () => {
                 <CollectionContainer title='Your top shows'>
                     {savedShows.items.map((item) => (
                         <CollectionItem
+                            link={`/show/${item?.show?.id}`}
                             name={
                                 item.show.name.length >= 20
                                     ? `${item.show.name.substring(0, 20)} ....`

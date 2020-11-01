@@ -15,7 +15,7 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import SongTrack from './SongTrack/SongTrack.jsx';
 
 const Playlist = ({ match, mainAppState }) => {
-    const [{ discover_weekly, detailedId }, dispatch] = useDataLayerValue();
+    const [{ discover_weekly, detailedId, artist_top_tracks }, dispatch] = useDataLayerValue();
     //? It can be anything an album, show, playlist, etc
     const _detailedId = detailedId;
     const windowSize = useWindowSize();
@@ -46,6 +46,22 @@ const Playlist = ({ match, mainAppState }) => {
             case 'artist':
                 spotifyInstance.getArtist(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
+
+                    spotifyInstance.getArtistTopTracks(_detailedId, 'US').then((res) => {
+                        dispatch({ type: 'SET_ARTIST_TOP_TRACKS', artist_top_tracks: res });
+                    });
+                });
+                break;
+
+            case 'show':
+                spotifyInstance.getShow(_detailedId).then((response) => {
+                    dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
+                });
+                break;
+
+            case 'episode':
+                spotifyInstance.getEpisode(_detailedId).then((response) => {
+                    dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
                 });
                 break;
 
@@ -55,6 +71,7 @@ const Playlist = ({ match, mainAppState }) => {
     }, [_detailedId]);
 
     console.log('detailed app data', discover_weekly);
+    console.log('artist top tracks', artist_top_tracks);
     console.log(mainAppState);
 
     return (
@@ -92,18 +109,25 @@ const Playlist = ({ match, mainAppState }) => {
 
                     <div className='detailed__songs'>
                         <div className='detailed__songs__icons'>
-                            <PlayCircleFilledIcon className='detailed__shuffle' />
+                            <a target='_blank' href={discover_weekly?.external_urls?.spotify}>
+                                <PlayCircleFilledIcon className='detailed__shuffle' />
+                            </a>
                             <FavoriteIcon fontSize='large' />
                             <MoreHorizIcon />
                         </div>
                         {discover_weekly?.tracks?.items?.length > 0 &&
-                            discover_weekly?.tracks?.items.map((item) => (
-                                <SongTrack
-                                    trackImg={item?.track?.album?.images[0]?.url}
-                                    trackName={item?.track?.name}
-                                    trackArtists={item?.track?.artists}
-                                />
-                            ))}
+                            discover_weekly?.tracks?.items.map((item) => {
+                                if (item?.track === null) return null;
+
+                                return (
+                                    <SongTrack
+                                        link={item?.external_urls?.spotify}
+                                        trackImg={item?.track?.album?.images[0]?.url}
+                                        trackName={item?.track?.name}
+                                        trackArtists={item?.track?.artists}
+                                    />
+                                );
+                            })}
                     </div>
                 </>
             )}
@@ -125,19 +149,24 @@ const Playlist = ({ match, mainAppState }) => {
                                 <strong>{discover_weekly?.type.toUpperCase()}</strong>
                             )}
                             <h4>{discover_weekly?.name}</h4>
-                            {windowSizeCalc && <p>{discover_weekly?.tracks?.items.length} songs</p>}
+                            {windowSizeCalc && (
+                                <p>{discover_weekly?.tracks?.items?.length} songs</p>
+                            )}
                         </div>
                     </div>
 
                     <div className='detailed__songs'>
                         <div className='detailed__songs__icons'>
-                            <PlayCircleFilledIcon className='detailed__shuffle' />
+                            <a target='_blank' href={discover_weekly?.external_urls?.spotify}>
+                                <PlayCircleFilledIcon className='detailed__shuffle' />
+                            </a>
                             <FavoriteIcon fontSize='large' />
                             <MoreHorizIcon />
                         </div>
                         {discover_weekly?.tracks?.items?.length > 0 &&
                             discover_weekly?.tracks?.items.map((item) => (
                                 <SongTrack
+                                    link={item?.external_urls?.spotify}
                                     trackImg={discover_weekly?.images[0]?.url}
                                     trackName={item?.name}
                                     trackArtists={item?.artists}
@@ -169,11 +198,14 @@ const Playlist = ({ match, mainAppState }) => {
 
                     <div className='detailed__songs'>
                         <div className='detailed__songs__icons'>
-                            <PlayCircleFilledIcon className='detailed__shuffle' />
+                            <a target='_blank' href={discover_weekly?.external_urls?.spotify}>
+                                <PlayCircleFilledIcon className='detailed__shuffle' />
+                            </a>
                             <FavoriteIcon fontSize='large' />
                             <MoreHorizIcon />
                         </div>
                         <SongTrack
+                            link={discover_weekly?.external_urls?.spotify}
                             trackImg={discover_weekly?.album?.images[0]?.url}
                             trackName={discover_weekly?.name}
                             trackArtists={discover_weekly?.album?.artists}
@@ -206,18 +238,109 @@ const Playlist = ({ match, mainAppState }) => {
 
                     <div className='detailed__songs'>
                         <div className='detailed__songs__icons'>
-                            <PlayCircleFilledIcon className='detailed__shuffle' />
+                            <a target='_blank' href={discover_weekly?.external_urls?.spotify}>
+                                <PlayCircleFilledIcon className='detailed__shuffle' />
+                            </a>
                             <FavoriteIcon fontSize='large' />
                             <MoreHorizIcon />
                         </div>
-                        {/* {discover_weekly?.tracks?.items?.length > 0 &&
-                            discover_weekly?.tracks?.items.map((item) => (
+
+                        {artist_top_tracks?.tracks?.length > 0 &&
+                            artist_top_tracks?.tracks?.map((item) => (
                                 <SongTrack
-                                    trackImg={item?.track?.album?.images[0]?.url}
-                                    trackName={item?.track?.name}
-                                    trackArtists={item?.track?.artists}
+                                    link={item?.album?.external_urls?.spotify}
+                                    trackImg={item?.album?.images[0]?.url}
+                                    trackName={item?.album?.name}
+                                    trackArtists={item?.album?.artists}
                                 />
-                            ))} */}
+                            ))}
+                    </div>
+                </>
+            )}
+
+            {/* For podcast */}
+            {mainAppState === 'show' && (
+                <>
+                    <div className='detailed__info'>
+                        <img
+                            src={
+                                discover_weekly
+                                    ? discover_weekly?.images[0]?.url
+                                    : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
+                            }
+                            alt={discover_weekly?.name}
+                        />
+                        <div className='detailed__info__text'>
+                            {windowSizeCalc && <strong>PODCAST</strong>}
+                            <h4>{discover_weekly?.name}</h4>
+                            <p>{discover_weekly?.publisher}</p>
+                        </div>
+                    </div>
+
+                    <div className='detailed__songs'>
+                        <div className='detailed__songs__icons'>
+                            <a target='_blank' href={discover_weekly?.external_urls?.spotify}>
+                                <PlayCircleFilledIcon className='detailed__shuffle' />
+                            </a>
+                            <FavoriteIcon fontSize='large' />
+                            <MoreHorizIcon />
+                        </div>
+
+                        <h1>All Episodes</h1>
+                        {discover_weekly?.episodes?.items?.length > 0 &&
+                            discover_weekly?.episodes?.items.map((item, index) => (
+                                <SongTrack
+                                    link={item?.external_urls?.spotify}
+                                    trackImg={item?.images[0]?.url}
+                                    trackName={item?.name}
+                                    episodeDescription={{
+                                        description: item?.description,
+                                        episodeId: item?.id,
+                                        episode_count:
+                                            +discover_weekly?.episodes?.items?.length - +index,
+                                    }}
+                                />
+                            ))}
+                    </div>
+                </>
+            )}
+
+            {/* For episode */}
+            {mainAppState === 'episode' && (
+                <>
+                    <div className='detailed__info'>
+                        <img
+                            src={
+                                discover_weekly
+                                    ? discover_weekly?.images[0]?.url
+                                    : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
+                            }
+                            alt={discover_weekly?.name}
+                        />
+                        <div className='detailed__info__text'>
+                            {windowSizeCalc && <strong>EPISODE</strong>}
+                            <h4>{discover_weekly?.name}</h4>
+                        </div>
+                    </div>
+
+                    <div className='detailed__songs'>
+                        <div className='detailed__songs__icons'>
+                            <a target='_blank' href={discover_weekly?.external_urls?.spotify}>
+                                <PlayCircleFilledIcon className='detailed__shuffle' />
+                            </a>
+                            <FavoriteIcon fontSize='large' />
+                            <MoreHorizIcon />
+                        </div>
+
+                        <SongTrack
+                            link={discover_weekly?.external_urls?.spotify}
+                            trackImg={discover_weekly?.images[0]?.url}
+                            trackName={discover_weekly?.name}
+                            episodeDescription={{
+                                description: discover_weekly?.description,
+                                episodeId: discover_weekly?.id,
+                            }}
+                        />
                     </div>
                 </>
             )}

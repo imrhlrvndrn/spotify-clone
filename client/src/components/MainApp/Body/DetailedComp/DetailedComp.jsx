@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { spotifyInstance } from '../../../../config/spotify';
 import { useDataLayerValue } from '../../../../DataLayer';
 import useWindowSize from '../../../../utils/useWindowSize';
@@ -16,6 +16,8 @@ import SongTrack from './SongTrack/SongTrack.jsx';
 
 const Playlist = ({ match, mainAppState }) => {
     const [{ discover_weekly, detailedId, artist_top_tracks }, dispatch] = useDataLayerValue();
+    const [isPlaying, setIsPlaying] = useState(false);
+    let audio = new Audio(discover_weekly?.preview_url);
     //? It can be anything an album, show, playlist, etc
     const _detailedId = detailedId;
     const windowSize = useWindowSize();
@@ -68,11 +70,20 @@ const Playlist = ({ match, mainAppState }) => {
             default:
                 break;
         }
-    }, [_detailedId]);
+    }, [_detailedId, mainAppState]);
+
+    useEffect(() => {
+        if (isPlaying) {
+            audio.play();
+        } else {
+            audio.pause();
+        }
+    }, [isPlaying]);
 
     console.log('detailed app data', discover_weekly);
     console.log('artist top tracks', artist_top_tracks);
     console.log(mainAppState);
+    console.log('isPlaying state: ', isPlaying);
 
     return (
         <StyledDetailedComp>
@@ -82,7 +93,7 @@ const Playlist = ({ match, mainAppState }) => {
                     <div className='detailed__info'>
                         <img
                             src={
-                                discover_weekly
+                                discover_weekly?.images
                                     ? discover_weekly?.images[0]?.url
                                     : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
                             }
@@ -125,6 +136,7 @@ const Playlist = ({ match, mainAppState }) => {
                                         trackImg={item?.track?.album?.images[0]?.url}
                                         trackName={item?.track?.name}
                                         trackArtists={item?.track?.artists}
+                                        preview_url={item?.track?.preview_url}
                                     />
                                 );
                             })}
@@ -138,7 +150,7 @@ const Playlist = ({ match, mainAppState }) => {
                     <div className='detailed__info'>
                         <img
                             src={
-                                discover_weekly
+                                discover_weekly?.images
                                     ? discover_weekly?.images[0]?.url
                                     : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
                             }
@@ -170,6 +182,7 @@ const Playlist = ({ match, mainAppState }) => {
                                     trackImg={discover_weekly?.images[0]?.url}
                                     trackName={item?.name}
                                     trackArtists={item?.artists}
+                                    preview_url={item?.preview_url}
                                 />
                             ))}
                     </div>
@@ -182,7 +195,7 @@ const Playlist = ({ match, mainAppState }) => {
                     <div className='detailed__info'>
                         <img
                             src={
-                                discover_weekly
+                                discover_weekly?.album
                                     ? discover_weekly?.album?.images[0]?.url
                                     : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
                             }
@@ -209,8 +222,15 @@ const Playlist = ({ match, mainAppState }) => {
                             trackImg={discover_weekly?.album?.images[0]?.url}
                             trackName={discover_weekly?.name}
                             trackArtists={discover_weekly?.album?.artists}
+                            preview_url={
+                                discover_weekly?.preview_url || discover_weekly?.audio_preview_url
+                            }
                         />
                     </div>
+                    <button onClick={() => setIsPlaying(!isPlaying)}>
+                        {isPlaying ? 'Pause' : 'Play'}
+                    </button>
+                    {/* <audio src={discover_weekly?.preview_url} ref={audioRef}></audio> */}
                 </>
             )}
 
@@ -220,7 +240,7 @@ const Playlist = ({ match, mainAppState }) => {
                     <div className='detailed__info'>
                         <img
                             src={
-                                discover_weekly
+                                discover_weekly?.images
                                     ? discover_weekly?.images[0]?.url
                                     : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
                             }
@@ -264,7 +284,7 @@ const Playlist = ({ match, mainAppState }) => {
                     <div className='detailed__info'>
                         <img
                             src={
-                                discover_weekly
+                                discover_weekly?.images
                                     ? discover_weekly?.images[0]?.url
                                     : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
                             }
@@ -299,6 +319,7 @@ const Playlist = ({ match, mainAppState }) => {
                                         episode_count:
                                             +discover_weekly?.episodes?.items?.length - +index,
                                     }}
+                                    preview_url={item?.preview_url || item?.audio_preview_url}
                                 />
                             ))}
                     </div>
@@ -311,7 +332,7 @@ const Playlist = ({ match, mainAppState }) => {
                     <div className='detailed__info'>
                         <img
                             src={
-                                discover_weekly
+                                discover_weekly?.images
                                     ? discover_weekly?.images[0]?.url
                                     : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
                             }

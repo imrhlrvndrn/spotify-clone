@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Styled components
 import StyledFooter from './StyledFooter';
@@ -13,31 +13,59 @@ import VolumeDownIcon from '@material-ui/icons/VolumeDown';
 import PauseCircleOutlineIcon from '@material-ui/icons/PauseCircleOutline';
 import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay';
 import { Grid, Slider } from '@material-ui/core';
+import { useDataLayerValue } from '../../../DataLayer';
 
 const Footer = () => {
+    const [{ currentPlayingSong }] = useDataLayerValue();
+    const [isPlaying, setIsPlaying] = useState(true);
+    const audioRef = useRef(null);
+
+    useEffect(() => {
+        if (isPlaying) audioRef.current.play();
+        else audioRef.current.pause();
+    }, [isPlaying, currentPlayingSong?.name]);
+
+    console.log(audioRef);
+
     return (
         <StyledFooter>
+            <audio
+                onEnded={() => setIsPlaying(false)}
+                src={currentPlayingSong?.preview_url}
+                ref={audioRef}
+            ></audio>
             <div className='footer__left'>
                 <img
                     className='footer__left__albumlogo'
-                    src='https://i.pinimg.com/736x/88/0f/ce/880fcec633e280d7e93895db9360aca6.jpg'
-                    alt=''
+                    src={currentPlayingSong?.image}
+                    alt={currentPlayingSong?.name}
                 />
                 <div className='song_details'>
-                    <p className='song_details__name'>Older</p>
-                    <p className='song_details__artist'>Sasha</p>
+                    <p className='song_details__name'>{currentPlayingSong?.name}</p>
+                    <p className='song_details__artist'>
+                        {currentPlayingSong?.artists
+                            ?.map((artist) => artist?.name)
+                            .join(', ')
+                            .substring(0, 25)}
+                        ...
+                    </p>
                 </div>
             </div>
             <div className='footer__center'>
                 <ShuffleIcon />
                 <SkipPreviousIcon />
-                <PlayCircleOutlineIcon />
+                {isPlaying ? (
+                    <PauseCircleOutlineIcon onClick={() => setIsPlaying(false)} />
+                ) : (
+                    <PlayCircleOutlineIcon onClick={() => setIsPlaying(true)} />
+                )}
                 <SkipNextIcon />
                 <RepeatIcon />
             </div>
             <div className='footer__right'>
                 <PlaylistPlayIcon />
                 <VolumeDownIcon />
+                {/* <Slider /> */}
             </div>
         </StyledFooter>
     );

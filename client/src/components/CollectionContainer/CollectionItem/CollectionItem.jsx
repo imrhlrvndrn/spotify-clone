@@ -19,8 +19,8 @@ const CollectionItem = ({ name, image, artist, type, link, onClick, enableType, 
                 />
                 <div className='trackInfo'>
                     <h2 className='trackInfo__trackName'>
-                        {name.length >= 25 && !mutable
-                            ? `${name.substring(0, 25)} ....`
+                        {name?.length >= 25 && !mutable
+                            ? `${name?.substring(0, 25)} ....`
                             : `${name}`}
                     </h2>
                     {artist && (

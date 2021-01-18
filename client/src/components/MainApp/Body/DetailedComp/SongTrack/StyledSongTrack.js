@@ -17,7 +17,7 @@ export default styled.div`
         }
     }
 
-    a {
+    .detailedSong {
         display: flex;
         width: 100%;
     }

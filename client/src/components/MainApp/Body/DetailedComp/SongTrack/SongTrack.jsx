@@ -20,30 +20,32 @@ const PlaylistSong = ({
     const [{ discover_weekly }, dispatch] = useDataLayerValue();
 
     return (
-        <StyledSongTrack>
+        <StyledSongTrack style={{ cursor: `${preview_url === null ? 'not-allowed' : 'pointer'}` }}>
             <div
                 className='detailedSong'
                 onClick={() => {
-                    dispatch({
-                        type: 'SET_CURRENT_PLAYING_SONG',
-                        currentPlayingSong: {
-                            image: trackImg || DummyImage,
-                            name: trackName,
-                            artists: trackArtists,
-                            description: episodeDescription || '',
-                            mediaType: discover_weekly?.type,
-                            preview_url: preview_url,
-                        },
-                    });
+                    if (preview_url !== null)
+                        dispatch({
+                            type: 'SET_CURRENT_PLAYING_SONG',
+                            currentPlayingSong: {
+                                image: trackImg || DummyImage,
+                                name: trackName,
+                                artists: trackArtists,
+                                description: episodeDescription || '',
+                                mediaType: discover_weekly?.type,
+                                preview_url: preview_url,
+                            },
+                        });
                 }}
             >
-                {/* <a target='_blank' rel='no-referrer' href={link}> */}
                 <img src={trackImg} alt={trackName} />
                 <div className='detailedSong__info'>
                     <h1>
-                        {episodeDescription?.episode_count &&
-                            `#${episodeDescription?.episode_count} `}
-                        {trackName}
+                        <a target='_blank' rel='no-referrer' href={link}>
+                            {episodeDescription?.episode_count &&
+                                `#${episodeDescription?.episode_count} `}
+                            {trackName}
+                        </a>
                     </h1>
                     {trackArtists?.length && (
                         <p>{trackArtists.map((artist) => artist?.name).join(', ')}</p>
@@ -59,7 +61,6 @@ const PlaylistSong = ({
                         </Link>
                     )}
                 </div>
-                {/* </a> */}
             </div>
         </StyledSongTrack>
     );

@@ -83,7 +83,6 @@ const Playlist = ({ match, mainAppState }) => {
     console.log('detailed app data', discover_weekly);
     console.log('artist top tracks', artist_top_tracks);
     console.log(mainAppState);
-    console.log('isPlaying state: ', isPlaying);
 
     return (
         <StyledDetailedComp>
@@ -132,7 +131,7 @@ const Playlist = ({ match, mainAppState }) => {
 
                                 return (
                                     <SongTrack
-                                        link={item?.external_urls?.spotify}
+                                        link={item?.track?.external_urls?.spotify}
                                         trackImg={item?.track?.album?.images[0]?.url}
                                         trackName={item?.track?.name}
                                         trackArtists={item?.track?.artists}
@@ -222,15 +221,9 @@ const Playlist = ({ match, mainAppState }) => {
                             trackImg={discover_weekly?.album?.images[0]?.url}
                             trackName={discover_weekly?.name}
                             trackArtists={discover_weekly?.album?.artists}
-                            preview_url={
-                                discover_weekly?.preview_url || discover_weekly?.audio_preview_url
-                            }
+                            preview_url={discover_weekly?.preview_url}
                         />
                     </div>
-                    <button onClick={() => setIsPlaying(!isPlaying)}>
-                        {isPlaying ? 'Pause' : 'Play'}
-                    </button>
-                    {/* <audio src={discover_weekly?.preview_url} ref={audioRef}></audio> */}
                 </>
             )}
 
@@ -319,7 +312,7 @@ const Playlist = ({ match, mainAppState }) => {
                                         episode_count:
                                             +discover_weekly?.episodes?.items?.length - +index,
                                     }}
-                                    preview_url={item?.preview_url || item?.audio_preview_url}
+                                    preview_url={item?.audio_preview_url}
                                 />
                             ))}
                     </div>
@@ -361,6 +354,7 @@ const Playlist = ({ match, mainAppState }) => {
                                 description: discover_weekly?.description,
                                 episodeId: discover_weekly?.id,
                             }}
+                            preview_url={discover_weekly?.audio_preview_url}
                         />
                     </div>
                 </>

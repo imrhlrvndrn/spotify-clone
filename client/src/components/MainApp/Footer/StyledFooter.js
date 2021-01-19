@@ -45,14 +45,19 @@ export default styled.div`
     .footer__center {
         flex: 0.4;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: center;
         align-items: center;
 
         svg {
+            margin-right: 2rem;
             transition: 0.2s linear;
 
             &:hover {
-                transform: scale(1.4);
+                cursor: pointer;
+            }
+
+            &:nth-child(3) {
+                transform: scale(2);
             }
         }
     }

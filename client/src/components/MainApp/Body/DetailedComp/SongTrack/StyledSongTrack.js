@@ -1,13 +1,9 @@
 import styled from 'styled-components';
 
 export default styled.div`
-    padding: 1rem 0;
     display: flex;
     color: white;
     border-radius: 5px;
-    @media ${(props) => props.theme.breakpoints.lg_tablet} {
-        padding: 1rem;
-    }
 
     &:hover {
         cursor: pointer;
@@ -18,8 +14,12 @@ export default styled.div`
     }
 
     .detailedSong {
+        padding: 1rem 0;
         display: flex;
         width: 100%;
+        @media ${(props) => props.theme.breakpoints.lg_tablet} {
+            padding: 1rem;
+        }
     }
 
     img {
@@ -44,6 +44,12 @@ export default styled.div`
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+
+            a {
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
         }
 
         p {

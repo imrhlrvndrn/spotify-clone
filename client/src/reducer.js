@@ -14,13 +14,11 @@ export const initialState = {
     recentlyPlayedTracks: {},
     searchQuery: '',
     searchResults: {},
-    currentPlayingSong: {
-        image: 'https://spotify-clone-6dddf.web.app/static/media/dummy-image.57d487da.png',
-        name: 'No song',
-    },
+    currentPlayingSong: {},
+    currentPlaylist: [],
     // ! Remove the token after development
     token:
-        'BQDpgt6UjW9Hs60BDB5f72JiJH6zBlZAa9MKukgTqhPTXDN1zS6QlVD4sR6pGXRArcF37p1szJEsjvxP8U3UBYP5txL5YVtnPdGsuVaJGjRJYst55S1YhlwjznnMz5sdQOWoXO9K4N68syHiK9KsDfNhX_gyXnrmzoV7fwNt4WCMBGG6L9qx489pa1jIeQ',
+        'BQC_vBxqRnw1RKkjaS3e28vwbj3bEHMS2KE4ZKajxABw4HK9b-3A9CsghUMSV0DswH9A2GwAUYfiHp5OuCgae3KeJwxuPYdnpAt7LziI0rUPvbv_JHnjSaUpk6ffP2DfNMv5DID2Smw6VXPk46jKlQzy3ErkrvmjJLlvEpjJtctiogU_Fpsdc9HLMqxwvw',
 };
 
 const reducer = (state, action) => {
@@ -71,6 +69,9 @@ const reducer = (state, action) => {
 
         case 'SET_CURRENT_PLAYING_SONG':
             return { ...state, currentPlayingSong: action.currentPlayingSong };
+
+        case 'SET_CURRENT_PLAYLIST':
+            return { ...state, currentPlaylist: action.currentPlaylist };
 
         default:
             return state;

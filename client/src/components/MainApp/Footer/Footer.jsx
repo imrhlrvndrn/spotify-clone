@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useDataLayerValue } from '../../../DataLayer';
 
 // Styled components
 import StyledFooter from './StyledFooter';
@@ -13,7 +14,9 @@ import VolumeDownIcon from '@material-ui/icons/VolumeDown';
 import PauseCircleFilledIcon from '@material-ui/icons/PauseCircleFilled';
 import PlaylistPlayIcon from '@material-ui/icons/PlaylistPlay';
 import { Grid, Slider } from '@material-ui/core';
-import { useDataLayerValue } from '../../../DataLayer';
+
+// Images
+import DummyImage from '../../CollectionContainer/CollectionItem/dummy-image.png';
 
 const Footer = () => {
     const [{ currentPlayingSong }] = useDataLayerValue();
@@ -24,13 +27,23 @@ const Footer = () => {
     });
     const audioRef = useRef(null);
 
+    // Controls the Play/Pause action
     useEffect(() => {
         if (isPlaying) audioRef.current.play();
         else audioRef.current.pause();
     }, [isPlaying]);
 
+    // Plays the song again when the songtrack is clicked (once the song is finished playing)
     useEffect(() => {
-        if (!isPlaying && currentPlayingSong?.name !== 'No song') {
+        if (!isPlaying && currentPlayingSong?.preview_url) {
+            audioRef.current.play();
+            setIsPlaying(true);
+        }
+    }, [currentPlayingSong]);
+
+    // Controls the Play/Pause action of other songs when clicked another SongTrack (while a )
+    useEffect(() => {
+        if (!isPlaying && currentPlayingSong?.name) {
             setIsPlaying(true);
         }
         if (isPlaying) audioRef.current.play();
@@ -58,11 +71,13 @@ const Footer = () => {
                 ref={audioRef}
             ></audio>
             <div className='footer__left'>
-                <img
-                    className='footer__left__albumlogo'
-                    src={currentPlayingSong?.image}
-                    alt={currentPlayingSong?.name}
-                />
+                {currentPlayingSong?.image && (
+                    <img
+                        className='footer__left__albumlogo'
+                        src={currentPlayingSong?.image ? currentPlayingSong?.image : DummyImage}
+                        alt={currentPlayingSong?.name}
+                    />
+                )}
                 <div className='song_details'>
                     <p className='song_details__name'>{currentPlayingSong?.name}</p>
                     {currentPlayingSong?.artists?.length && (

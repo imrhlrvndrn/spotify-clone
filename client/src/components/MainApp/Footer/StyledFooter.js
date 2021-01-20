@@ -18,9 +18,12 @@ export default styled.div`
         display: flex;
         /* justify-content: space-between; */
         align-items: center;
+        @media ${(props) => props.theme.breakpoints.tablet} {
+            flex: 1;
+        }
 
         &__albumlogo {
-            width: auto;
+            width: 80px;
             height: 100%;
             margin-right: 1rem;
             @media ${(props) => props.theme.breakpoints.lg_tablet} {
@@ -47,10 +50,16 @@ export default styled.div`
         display: flex;
         justify-content: center;
         align-items: center;
+        @media ${(props) => props.theme.breakpoints.tablet} {
+            flex: 0.2;
+        }
 
         svg {
             margin-right: 2rem;
             transition: 0.2s linear;
+            @media ${(props) => props.theme.breakpoints.tablet} {
+                display: none;
+            }
 
             &:hover {
                 cursor: pointer;
@@ -58,6 +67,10 @@ export default styled.div`
 
             &:nth-child(3) {
                 transform: scale(2);
+                @media ${(props) => props.theme.breakpoints.tablet} {
+                    display: block;
+                    margin-right: 1rem;
+                }
             }
         }
     }
@@ -67,5 +80,8 @@ export default styled.div`
         display: flex;
         justify-content: space-evenly;
         align-items: center;
+        @media ${(props) => props.theme.breakpoints.tablet} {
+            display: none;
+        }
     }
 `;

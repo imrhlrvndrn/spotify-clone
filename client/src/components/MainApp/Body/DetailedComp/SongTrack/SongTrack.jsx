@@ -17,14 +17,14 @@ const PlaylistSong = ({
     link,
     preview_url,
 }) => {
-    const [{ discover_weekly }, dispatch] = useDataLayerValue();
+    const [{ discover_weekly, currentPlaylist }, dispatch] = useDataLayerValue();
 
     return (
         <StyledSongTrack style={{ cursor: `${preview_url === null ? 'not-allowed' : 'pointer'}` }}>
             <div
                 className='detailedSong'
                 onClick={() => {
-                    if (preview_url !== null)
+                    if (preview_url !== null) {
                         dispatch({
                             type: 'SET_CURRENT_PLAYING_SONG',
                             currentPlayingSong: {
@@ -36,6 +36,11 @@ const PlaylistSong = ({
                                 preview_url: preview_url,
                             },
                         });
+                        console.log(
+                            'The track index is: ',
+                            currentPlaylist.findIndex((track) => track?.preview_url)
+                        );
+                    }
                 }}
             >
                 <img src={trackImg} alt={trackName} />

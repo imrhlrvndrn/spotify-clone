@@ -1,6 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { spotifyInstance } from '../../../../config/spotify';
 import { useDataLayerValue } from '../../../../DataLayer';
+import {
+    transformPodcastToPlaylist,
+    transformAlbumToPlaylist,
+    transformArtistToPlaylist,
+    transformPlaylistToPlaylist,
+    transformTrackToPlaylist,
+    transformEpisodeToPlaylist,
+} from '../../../../utils/transformPlaylist';
 import useWindowSize from '../../../../utils/useWindowSize';
 
 // Styled components
@@ -15,9 +23,10 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import SongTrack from './SongTrack/SongTrack.jsx';
 
 const Playlist = ({ match, mainAppState }) => {
-    const [{ discover_weekly, detailedId, artist_top_tracks }, dispatch] = useDataLayerValue();
-    const [isPlaying, setIsPlaying] = useState(false);
-    let audio = new Audio(discover_weekly?.preview_url);
+    const [
+        { discover_weekly, detailedId, artist_top_tracks, currentPlaylist },
+        dispatch,
+    ] = useDataLayerValue();
     //? It can be anything an album, show, playlist, etc
     const _detailedId = detailedId;
     const windowSize = useWindowSize();
@@ -30,18 +39,30 @@ const Playlist = ({ match, mainAppState }) => {
             case 'playlist':
                 spotifyInstance.getPlaylist(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
+                    dispatch({
+                        type: 'SET_CURRENT_PLAYLIST',
+                        currentPlaylist: transformPlaylistToPlaylist(response),
+                    });
                 });
                 break;
 
             case 'album':
                 spotifyInstance.getAlbum(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
+                    dispatch({
+                        type: 'SET_CURRENT_PLAYLIST',
+                        currentPlaylist: transformAlbumToPlaylist(response),
+                    });
                 });
                 break;
 
             case 'track':
                 spotifyInstance.getTrack(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
+                    dispatch({
+                        type: 'SET_CURRENT_PLAYLIST',
+                        currentPlaylist: transformTrackToPlaylist([response]),
+                    });
                 });
                 break;
 
@@ -51,6 +72,10 @@ const Playlist = ({ match, mainAppState }) => {
 
                     spotifyInstance.getArtistTopTracks(_detailedId, 'US').then((res) => {
                         dispatch({ type: 'SET_ARTIST_TOP_TRACKS', artist_top_tracks: res });
+                        dispatch({
+                            type: 'SET_CURRENT_PLAYLIST',
+                            currentPlaylist: transformArtistToPlaylist(res),
+                        });
                     });
                 });
                 break;
@@ -58,12 +83,20 @@ const Playlist = ({ match, mainAppState }) => {
             case 'show':
                 spotifyInstance.getShow(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
+                    dispatch({
+                        type: 'SET_CURRENT_PLAYLIST',
+                        currentPlaylist: transformPodcastToPlaylist(response),
+                    });
                 });
                 break;
 
             case 'episode':
                 spotifyInstance.getEpisode(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
+                    dispatch({
+                        type: 'SET_CURRENT_PLAYLIST',
+                        currentPlaylist: transformEpisodeToPlaylist([response]),
+                    });
                 });
                 break;
 
@@ -72,17 +105,11 @@ const Playlist = ({ match, mainAppState }) => {
         }
     }, [_detailedId, mainAppState]);
 
-    useEffect(() => {
-        if (isPlaying) {
-            audio.play();
-        } else {
-            audio.pause();
-        }
-    }, [isPlaying]);
-
     console.log('detailed app data', discover_weekly);
     console.log('artist top tracks', artist_top_tracks);
     console.log(mainAppState);
+
+    console.log('Current Playlist: ', currentPlaylist);
 
     return (
         <StyledDetailedComp>
@@ -195,7 +222,11 @@ const Playlist = ({ match, mainAppState }) => {
                         <img
                             src={
                                 discover_weekly?.album
-                                    ? discover_weekly?.album?.images[0]?.url
+                                    ? `${
+                                          windowSize?.width < 1024
+                                              ? discover_weekly?.album?.images[1]?.url
+                                              : discover_weekly?.album?.images[0]?.url
+                                      }`
                                     : 'https://cdn.shortpixel.ai/client/q_lossy,ret_img,w_250/https://www.hypebot.com/wp-content/uploads/2020/07/discover-weekly-250x250.png'
                             }
                             alt={discover_weekly?.name}
@@ -218,7 +249,7 @@ const Playlist = ({ match, mainAppState }) => {
                         </div>
                         <SongTrack
                             link={discover_weekly?.external_urls?.spotify}
-                            trackImg={discover_weekly?.album?.images[0]?.url}
+                            trackImg={discover_weekly?.album?.images[2]?.url}
                             trackName={discover_weekly?.name}
                             trackArtists={discover_weekly?.album?.artists}
                             preview_url={discover_weekly?.preview_url}
@@ -263,8 +294,9 @@ const Playlist = ({ match, mainAppState }) => {
                                 <SongTrack
                                     link={item?.album?.external_urls?.spotify}
                                     trackImg={item?.album?.images[0]?.url}
-                                    trackName={item?.album?.name}
+                                    trackName={item?.name}
                                     trackArtists={item?.album?.artists}
+                                    preview_url={item?.preview_url}
                                 />
                             ))}
                     </div>

@@ -47,17 +47,20 @@ const Home = () => {
             {/* Recently played */}
             {recentlyPlayedTracks.items?.length > 0 && (
                 <CollectionContainer title='Recently played'>
-                    {recentlyPlayedTracks.items.map((item) => (
+                    {recentlyPlayedTracks?.items?.map((item) => (
                         <CollectionItem
                             link={`/track/${item?.track?.id}`}
                             name={
-                                item.track.album.name.length >= 20
-                                    ? `${item.track.album.name.substring(0, 20)} ....`
-                                    : `${item.track.album.name}`
+                                item?.track?.name?.length >= 20
+                                    ? `${
+                                          item?.track?.name?.substring(0, 20) ||
+                                          item?.track?.album?.name?.substring(0, 20)
+                                      } ....`
+                                    : `${item?.track?.name || item?.track?.album?.name}`
                             }
                             image={item?.track?.album?.images[0]?.url}
-                            artist={item.track.album.artists
-                                .map((artist) => artist.name)
+                            artist={item?.track?.album?.artists
+                                .map((artist) => artist?.name)
                                 .join(', ')}
                         />
                     ))}
@@ -65,19 +68,19 @@ const Home = () => {
             )}
 
             {/* New Releases */}
-            {newReleases.items?.length > 0 && (
+            {newReleases?.items?.length > 0 && (
                 <CollectionContainer title='New releases'>
-                    {newReleases.items.map((item) => {
+                    {newReleases?.items?.map((item) => {
                         return (
                             <CollectionItem
                                 link={`/album/${item?.id}`}
                                 name={
-                                    item.name.length >= 20
-                                        ? `${item.name.substring(0, 20)} ....`
-                                        : `${item.name}`
+                                    item?.name?.length >= 20
+                                        ? `${item?.name?.substring(0, 20)} ....`
+                                        : `${item?.name}`
                                 }
                                 image={item?.images[0]?.url}
-                                artist={item.artists.map((artist) => artist.name).join(', ')}
+                                artist={item?.artists.map((artist) => artist?.name).join(', ')}
                             />
                         );
                     })}
@@ -85,19 +88,19 @@ const Home = () => {
             )}
 
             {/* Saved shows/podcasts */}
-            {savedShows.items?.length > 0 && (
+            {savedShows?.items?.length > 0 && (
                 <CollectionContainer title='Your top shows'>
-                    {savedShows.items.map((item) => (
+                    {savedShows?.items?.map((item) => (
                         <CollectionItem
                             link={`/show/${item?.show?.id}`}
                             name={
-                                item.show.name.length >= 20
-                                    ? `${item.show.name.substring(0, 20)} ....`
-                                    : `${item.show.name}`
+                                item?.show?.name?.length >= 20
+                                    ? `${item?.show?.name?.substring(0, 20)} ....`
+                                    : `${item?.show?.name}`
                             }
                             image={item?.show?.images[0]?.url}
-                            artist={item.show.publisher}
-                            type={item.type}
+                            artist={item?.show?.publisher}
+                            type={item?.type}
                         />
                     ))}
                 </CollectionContainer>

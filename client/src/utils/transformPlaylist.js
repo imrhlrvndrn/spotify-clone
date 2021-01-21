@@ -70,6 +70,8 @@ export const transformPlaylistToPlaylist = (playlistData) => {
 
 export const transformArtistToPlaylist = (artistSongsData) => {
     let currentPlaylist = artistSongsData?.tracks?.reduce((acc, cur) => {
+        console.log('Artist transform is initiated');
+
         let newSong;
         if (cur?.preview_url !== null) {
             newSong = {
@@ -88,6 +90,7 @@ export const transformArtistToPlaylist = (artistSongsData) => {
         }
         return acc;
     }, []);
+    console.log('The track Playlist data: ', currentPlaylist);
     return currentPlaylist;
 };
 

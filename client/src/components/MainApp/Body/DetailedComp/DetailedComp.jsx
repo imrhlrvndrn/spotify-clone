@@ -39,30 +39,30 @@ const Playlist = ({ match, mainAppState }) => {
             case 'playlist':
                 spotifyInstance.getPlaylist(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
-                    dispatch({
-                        type: 'SET_CURRENT_PLAYLIST',
-                        currentPlaylist: transformPlaylistToPlaylist(response),
-                    });
+                    // dispatch({
+                    //     type: 'SET_CURRENT_PLAYLIST',
+                    //     currentPlaylist: transformPlaylistToPlaylist(response),
+                    // });
                 });
                 break;
 
             case 'album':
                 spotifyInstance.getAlbum(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
-                    dispatch({
-                        type: 'SET_CURRENT_PLAYLIST',
-                        currentPlaylist: transformAlbumToPlaylist(response),
-                    });
+                    // dispatch({
+                    //     type: 'SET_CURRENT_PLAYLIST',
+                    //     currentPlaylist: transformAlbumToPlaylist(response),
+                    // });
                 });
                 break;
 
             case 'track':
                 spotifyInstance.getTrack(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
-                    dispatch({
-                        type: 'SET_CURRENT_PLAYLIST',
-                        currentPlaylist: transformTrackToPlaylist([response]),
-                    });
+                    // dispatch({
+                    //     type: 'SET_CURRENT_PLAYLIST',
+                    //     currentPlaylist: transformTrackToPlaylist([response]),
+                    // });
                 });
                 break;
 
@@ -72,10 +72,10 @@ const Playlist = ({ match, mainAppState }) => {
 
                     spotifyInstance.getArtistTopTracks(_detailedId, 'US').then((res) => {
                         dispatch({ type: 'SET_ARTIST_TOP_TRACKS', artist_top_tracks: res });
-                        dispatch({
-                            type: 'SET_CURRENT_PLAYLIST',
-                            currentPlaylist: transformArtistToPlaylist(res),
-                        });
+                        // dispatch({
+                        //     type: 'SET_CURRENT_PLAYLIST',
+                        //     currentPlaylist: transformArtistToPlaylist(res),
+                        // });
                     });
                 });
                 break;
@@ -83,20 +83,20 @@ const Playlist = ({ match, mainAppState }) => {
             case 'show':
                 spotifyInstance.getShow(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
-                    dispatch({
-                        type: 'SET_CURRENT_PLAYLIST',
-                        currentPlaylist: transformPodcastToPlaylist(response),
-                    });
+                    // dispatch({
+                    //     type: 'SET_CURRENT_PLAYLIST',
+                    //     currentPlaylist: transformPodcastToPlaylist(response),
+                    // });
                 });
                 break;
 
             case 'episode':
                 spotifyInstance.getEpisode(_detailedId).then((response) => {
                     dispatch({ type: 'SET_DISCOVER_WEEKLY', discover_weekly: response });
-                    dispatch({
-                        type: 'SET_CURRENT_PLAYLIST',
-                        currentPlaylist: transformEpisodeToPlaylist([response]),
-                    });
+                    // dispatch({
+                    //     type: 'SET_CURRENT_PLAYLIST',
+                    //     currentPlaylist: transformEpisodeToPlaylist([response]),
+                    // });
                 });
                 break;
 
@@ -163,6 +163,7 @@ const Playlist = ({ match, mainAppState }) => {
                                         trackName={item?.track?.name}
                                         trackArtists={item?.track?.artists}
                                         preview_url={item?.track?.preview_url}
+                                        detailedResponse={discover_weekly}
                                     />
                                 );
                             })}
@@ -209,6 +210,7 @@ const Playlist = ({ match, mainAppState }) => {
                                     trackName={item?.name}
                                     trackArtists={item?.artists}
                                     preview_url={item?.preview_url}
+                                    detailedResponse={discover_weekly}
                                 />
                             ))}
                     </div>
@@ -247,13 +249,16 @@ const Playlist = ({ match, mainAppState }) => {
                             <FavoriteIcon fontSize='large' />
                             <MoreHorizIcon />
                         </div>
-                        <SongTrack
-                            link={discover_weekly?.external_urls?.spotify}
-                            trackImg={discover_weekly?.album?.images[2]?.url}
-                            trackName={discover_weekly?.name}
-                            trackArtists={discover_weekly?.album?.artists}
-                            preview_url={discover_weekly?.preview_url}
-                        />
+                        {discover_weekly?.album && (
+                            <SongTrack
+                                link={discover_weekly?.external_urls?.spotify}
+                                trackImg={discover_weekly?.album?.images[2]?.url}
+                                trackName={discover_weekly?.name}
+                                trackArtists={discover_weekly?.album?.artists}
+                                preview_url={discover_weekly?.preview_url}
+                                detailedResponse={discover_weekly}
+                            />
+                        )}
                     </div>
                 </>
             )}
@@ -297,6 +302,7 @@ const Playlist = ({ match, mainAppState }) => {
                                     trackName={item?.name}
                                     trackArtists={item?.album?.artists}
                                     preview_url={item?.preview_url}
+                                    detailedResponse={artist_top_tracks}
                                 />
                             ))}
                     </div>
@@ -345,6 +351,7 @@ const Playlist = ({ match, mainAppState }) => {
                                             +discover_weekly?.episodes?.items?.length - +index,
                                     }}
                                     preview_url={item?.audio_preview_url}
+                                    detailedResponse={discover_weekly}
                                 />
                             ))}
                     </div>
@@ -378,16 +385,19 @@ const Playlist = ({ match, mainAppState }) => {
                             <MoreHorizIcon />
                         </div>
 
-                        <SongTrack
-                            link={discover_weekly?.external_urls?.spotify}
-                            trackImg={discover_weekly?.images[0]?.url}
-                            trackName={discover_weekly?.name}
-                            episodeDescription={{
-                                description: discover_weekly?.description,
-                                episodeId: discover_weekly?.id,
-                            }}
-                            preview_url={discover_weekly?.audio_preview_url}
-                        />
+                        {discover_weekly?.id && (
+                            <SongTrack
+                                link={discover_weekly?.external_urls?.spotify}
+                                trackImg={discover_weekly?.images[0]?.url}
+                                trackName={discover_weekly?.name}
+                                episodeDescription={{
+                                    description: discover_weekly?.description,
+                                    episodeId: discover_weekly?.id,
+                                }}
+                                preview_url={discover_weekly?.audio_preview_url}
+                                detailedResponse={discover_weekly}
+                            />
+                        )}
                     </div>
                 </>
             )}

@@ -19,11 +19,12 @@ import { Grid, Slider } from '@material-ui/core';
 import DummyImage from '../../CollectionContainer/CollectionItem/dummy-image.png';
 
 const Footer = () => {
-    const [{ currentPlayingSong }] = useDataLayerValue();
+    const [{ currentPlayingSong, currentPlaylist }, dispatch] = useDataLayerValue();
     const [isPlaying, setIsPlaying] = useState(false);
     const [playerControls, setPlayerControls] = useState({
         repeat: 'none',
         volume: 0.5,
+        shuffle: false,
     });
     const audioRef = useRef(null);
 
@@ -59,13 +60,44 @@ const Footer = () => {
         }
     };
 
+    const skipSongs = (forwards = true) => {
+        let index = currentPlaylist.findIndex(
+            (track) => track?.preview_url === currentPlayingSong?.preview_url
+        );
+
+        if (index === currentPlaylist?.length - 1 && forwards) index = 0;
+        else if (index === 0 && !forwards) index = currentPlaylist?.length - 1;
+        else {
+            if (forwards) index += 1;
+            else index -= 1;
+        }
+
+        if (playerControls?.shuffle) index = +Math.floor(Math.random() * currentPlaylist?.length);
+        console.log('Shuffled index: ', index);
+
+        dispatch({
+            type: 'SET_CURRENT_PLAYING_SONG',
+            currentPlayingSong: currentPlaylist[index],
+        });
+    };
+
+    console.log('Shuffle state: ', playerControls?.shuffle);
+
     return (
         <StyledFooter>
             <audio
                 onEnded={() => {
                     if (playerControls.repeat === 'repeat one') audioRef.current.play();
-                    else if (playerControls.repeat === 'repeat all') return;
-                    else setIsPlaying(false);
+                    else if (playerControls.repeat === 'repeat')
+                        currentPlaylist?.length === 1 ? audioRef.current.play() : skipSongs();
+                    else {
+                        let index = currentPlaylist.findIndex(
+                            (track) => track?.preview_url === currentPlayingSong?.preview_url
+                        );
+                        if (index === currentPlaylist?.length - 1 && !playerControls?.shuffle)
+                            return setIsPlaying(false);
+                        skipSongs();
+                    }
                 }}
                 src={currentPlayingSong?.preview_url}
                 ref={audioRef}
@@ -85,25 +117,32 @@ const Footer = () => {
                             {currentPlayingSong?.artists
                                 ?.map((artist) => artist?.name)
                                 .join(', ')
-                                .substring(0, 25)}
+                                .substring(0, 30)}
                             ...
                         </p>
                     )}
                 </div>
             </div>
             <div className='footer__center'>
-                <ShuffleIcon />
-                <SkipPreviousIcon />
+                <ShuffleIcon
+                    style={{ fill: `${playerControls?.shuffle ? '#1DB954' : '#fff'}` }}
+                    onClick={() =>
+                        setPlayerControls({ ...playerControls, shuffle: !playerControls?.shuffle })
+                    }
+                />
+                <SkipPreviousIcon onClick={() => skipSongs(false)} />
                 {isPlaying ? (
                     <PauseCircleFilledIcon onClick={() => setIsPlaying(false)} />
                 ) : (
                     <PlayCircleFilledIcon onClick={() => setIsPlaying(true)} />
                 )}
-                <SkipNextIcon />
+                <SkipNextIcon onClick={() => skipSongs(true)} />
                 <RepeatIcon
                     style={{ fill: `${playerControls.repeat === 'repeat' ? '#1DB954' : '#fff'}` }}
                     onClick={handleRepeatMode}
-                />
+                >
+                    <span>1</span>
+                </RepeatIcon>
             </div>
             <div className='footer__right'>
                 <PlaylistPlayIcon />

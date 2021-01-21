@@ -1,13 +1,18 @@
-import { requirePropFactory } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDataLayerValue } from '../../../../../DataLayer';
 
 // styled components
 import StyledSongTrack from './StyledSongTrack';
 
-// Dummy image
-import DummyImage from '../../../../CollectionContainer/CollectionItem/dummy-image.png';
+import {
+    transformAlbumToPlaylist,
+    transformArtistToPlaylist,
+    transformEpisodeToPlaylist,
+    transformPlaylistToPlaylist,
+    transformPodcastToPlaylist,
+    transformTrackToPlaylist,
+} from '../../../../../utils/transformPlaylist';
 
 const PlaylistSong = ({
     trackImg,
@@ -16,8 +21,21 @@ const PlaylistSong = ({
     episodeDescription,
     link,
     preview_url,
+    detailedResponse,
 }) => {
     const [{ discover_weekly, currentPlaylist }, dispatch] = useDataLayerValue();
+    const [isPlayed, setIsPlayed] = useState(false);
+
+    useEffect(() => {
+        if (currentPlaylist?.length)
+            dispatch({
+                type: 'SET_CURRENT_PLAYING_SONG',
+                currentPlayingSong:
+                    currentPlaylist[
+                        currentPlaylist.findIndex((track) => track?.preview_url === preview_url)
+                    ],
+            });
+    }, [isPlayed]);
 
     return (
         <StyledSongTrack style={{ cursor: `${preview_url === null ? 'not-allowed' : 'pointer'}` }}>
@@ -26,20 +44,23 @@ const PlaylistSong = ({
                 onClick={() => {
                     if (preview_url !== null) {
                         dispatch({
-                            type: 'SET_CURRENT_PLAYING_SONG',
-                            currentPlayingSong: {
-                                image: trackImg || DummyImage,
-                                name: trackName,
-                                artists: trackArtists,
-                                description: episodeDescription || '',
-                                mediaType: discover_weekly?.type,
-                                preview_url: preview_url,
-                            },
+                            type: 'SET_CURRENT_PLAYLIST',
+                            currentPlaylist:
+                                detailedResponse?.type === 'track'
+                                    ? transformTrackToPlaylist([detailedResponse])
+                                    : detailedResponse?.type === 'episode'
+                                    ? transformEpisodeToPlaylist([detailedResponse])
+                                    : detailedResponse?.type === 'playlist'
+                                    ? transformPlaylistToPlaylist(detailedResponse)
+                                    : detailedResponse?.type === 'album'
+                                    ? transformAlbumToPlaylist(detailedResponse)
+                                    : detailedResponse?.tracks
+                                    ? transformArtistToPlaylist(detailedResponse)
+                                    : detailedResponse?.type === 'show'
+                                    ? transformPodcastToPlaylist(detailedResponse)
+                                    : [],
                         });
-                        console.log(
-                            'The track index is: ',
-                            currentPlaylist.findIndex((track) => track?.preview_url)
-                        );
+                        setIsPlayed(!isPlayed);
                     }
                 }}
             >

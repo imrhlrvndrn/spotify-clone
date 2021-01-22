@@ -23,7 +23,7 @@ const Footer = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [playerControls, setPlayerControls] = useState({
         repeat: 'none',
-        volume: 0.5,
+        volume: 0.4,
         shuffle: false,
     });
     const audioRef = useRef(null);
@@ -52,6 +52,10 @@ const Footer = () => {
         }
         if (isPlaying) audioRef.current.play();
     }, [currentPlayingSong?.preview_url]);
+
+    useEffect(() => {
+        audioRef.current.volume = playerControls?.volume;
+    }, [playerControls?.volume]);
 
     const handleRepeatMode = () => {
         if (playerControls.repeat === 'none') {
@@ -87,9 +91,7 @@ const Footer = () => {
         } else {
             if (playerControls?.shuffle) {
                 const prevIndex = index;
-                console.log('PrevIndex: ', prevIndex);
                 index = +Math.floor(Math.random() * currentPlaylist?.length);
-                console.log('Shuffled index: ', index);
                 if (index === prevIndex) {
                     if (index >= currentPlaylist?.length - 1) index = 0;
                     else if (index <= 0) index = currentPlaylist?.length - 1;
@@ -99,15 +101,12 @@ const Footer = () => {
                 }
             }
         }
-        console.log('Final shuffled index: ', index);
 
         dispatch({
             type: 'SET_CURRENT_PLAYING_SONG',
             currentPlayingSong: currentPlaylist[index],
         });
     };
-
-    console.log('Shuffle state: ', playerControls?.shuffle);
 
     return (
         <StyledFooter>
@@ -118,9 +117,9 @@ const Footer = () => {
                     } else if (playerControls.repeat === 'repeat') {
                         if (currentPlaylist?.length === 1) {
                             audioRef.current.play();
-                            if (playerControls?.shuffle) skipSongs(true, false);
-                            else skipSongs(true, true);
                         }
+                        if (playerControls?.shuffle) skipSongs(true, false);
+                        else skipSongs(true, true);
                     } else {
                         let index = currentPlaylist.findIndex(
                             (track) => track?.preview_url === currentPlayingSong?.preview_url
@@ -179,6 +178,17 @@ const Footer = () => {
             <div className='footer__right'>
                 <PlaylistPlayIcon />
                 <VolumeDownIcon />
+                <input
+                    type='range'
+                    min='0'
+                    max='100'
+                    value={playerControls?.volume * 100}
+                    onChange={(e) => {
+                        setPlayerControls({ ...playerControls, volume: e.target.value / 100 });
+                    }}
+                    name='volumeSlider'
+                    id='volumeSlider'
+                />
                 {/* <Slider /> */}
             </div>
         </StyledFooter>

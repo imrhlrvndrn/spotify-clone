@@ -78,10 +78,18 @@ export default styled.div`
     .footer__right {
         flex: 0.3;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: flex-end;
         align-items: center;
         @media ${(props) => props.theme.breakpoints.tablet} {
             display: none;
+        }
+
+        * {
+            margin-left: 1rem;
+        }
+
+        input {
+            height: 2px;
         }
     }
 `;

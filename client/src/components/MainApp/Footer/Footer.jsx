@@ -28,6 +28,9 @@ const Footer = () => {
     });
     const audioRef = useRef(null);
 
+    let lsPlayerControls = localStorage.getItem('playerControls');
+    console.log(lsPlayerControls);
+
     // Controls the Play/Pause action
     useEffect(() => {
         if (isPlaying) audioRef.current.play();
@@ -60,20 +63,43 @@ const Footer = () => {
         }
     };
 
-    const skipSongs = (forwards = true) => {
+    const skipSongs = (forwards = true, differentiator = true) => {
+        // differentiator is a flag that avoids shuffle feature to not collide with the natural functionality
+
         let index = currentPlaylist.findIndex(
             (track) => track?.preview_url === currentPlayingSong?.preview_url
         );
 
-        if (index === currentPlaylist?.length - 1 && forwards) index = 0;
-        else if (index === 0 && !forwards) index = currentPlaylist?.length - 1;
-        else {
-            if (forwards) index += 1;
-            else index -= 1;
+        if (playerControls?.shuffle && differentiator) {
+            if (index >= currentPlaylist?.length - 1 && forwards) index = 0;
+            else if (index <= 0 && !forwards) index = currentPlaylist?.length - 1;
+            else {
+                if (forwards) index += 1;
+                else index -= 1;
+            }
+        } else if (!playerControls?.shuffle && differentiator) {
+            if (index >= currentPlaylist?.length - 1 && forwards) index = 0;
+            else if (index <= 0 && !forwards) index = currentPlaylist?.length - 1;
+            else {
+                if (forwards) index += 1;
+                else index -= 1;
+            }
+        } else {
+            if (playerControls?.shuffle) {
+                const prevIndex = index;
+                console.log('PrevIndex: ', prevIndex);
+                index = +Math.floor(Math.random() * currentPlaylist?.length);
+                console.log('Shuffled index: ', index);
+                if (index === prevIndex) {
+                    if (index >= currentPlaylist?.length - 1) index = 0;
+                    else if (index <= 0) index = currentPlaylist?.length - 1;
+                    else {
+                        index += 1;
+                    }
+                }
+            }
         }
-
-        if (playerControls?.shuffle) index = +Math.floor(Math.random() * currentPlaylist?.length);
-        console.log('Shuffled index: ', index);
+        console.log('Final shuffled index: ', index);
 
         dispatch({
             type: 'SET_CURRENT_PLAYING_SONG',
@@ -87,16 +113,22 @@ const Footer = () => {
         <StyledFooter>
             <audio
                 onEnded={() => {
-                    if (playerControls.repeat === 'repeat one') audioRef.current.play();
-                    else if (playerControls.repeat === 'repeat')
-                        currentPlaylist?.length === 1 ? audioRef.current.play() : skipSongs();
-                    else {
+                    if (playerControls.repeat === 'repeat one') {
+                        audioRef.current.play();
+                    } else if (playerControls.repeat === 'repeat') {
+                        if (currentPlaylist?.length === 1) {
+                            audioRef.current.play();
+                            if (playerControls?.shuffle) skipSongs(true, false);
+                            else skipSongs(true, true);
+                        }
+                    } else {
                         let index = currentPlaylist.findIndex(
                             (track) => track?.preview_url === currentPlayingSong?.preview_url
                         );
                         if (index === currentPlaylist?.length - 1 && !playerControls?.shuffle)
                             return setIsPlaying(false);
-                        skipSongs();
+                        else if (playerControls?.shuffle) return skipSongs(true, false);
+                        skipSongs(true, true);
                     }
                 }}
                 src={currentPlayingSong?.preview_url}
@@ -130,13 +162,13 @@ const Footer = () => {
                         setPlayerControls({ ...playerControls, shuffle: !playerControls?.shuffle })
                     }
                 />
-                <SkipPreviousIcon onClick={() => skipSongs(false)} />
+                <SkipPreviousIcon onClick={() => skipSongs(false, true)} />
                 {isPlaying ? (
                     <PauseCircleFilledIcon onClick={() => setIsPlaying(false)} />
                 ) : (
                     <PlayCircleFilledIcon onClick={() => setIsPlaying(true)} />
                 )}
-                <SkipNextIcon onClick={() => skipSongs(true)} />
+                <SkipNextIcon onClick={() => skipSongs(true, true)} />
                 <RepeatIcon
                     style={{ fill: `${playerControls.repeat === 'repeat' ? '#1DB954' : '#fff'}` }}
                     onClick={handleRepeatMode}

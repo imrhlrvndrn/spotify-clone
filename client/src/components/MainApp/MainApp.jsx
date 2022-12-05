@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 
 // Styled components
 import StyledMainApp from './StyledMainApp';
 
 // React components
-import Sidebar from './Sidebar/Sidebar';
-import Body from './Body/Body';
-import Footer from './Footer/Footer';
+import Body from '../Body/Body';
+import { Player, Sidebar } from '../';
+import { ExtendedPlayer } from '../Player/player.comp';
 
 const MainApp = () => {
+    const [showExtendedPlayer, setShowExtendedPlayer] = useState(false);
+
     return (
         <StyledMainApp>
             <div className='mainApp__body'>
@@ -20,7 +22,8 @@ const MainApp = () => {
                     <Route exact path='/:appState/:id' component={Body} />
                 </>
             </div>
-            <Footer />
+            <Player showExtendedPlayer={setShowExtendedPlayer} />
+            {showExtendedPlayer && <ExtendedPlayer showExtendedPlayer={setShowExtendedPlayer} />}
         </StyledMainApp>
     );
 };

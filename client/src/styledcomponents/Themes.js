@@ -7,7 +7,7 @@ export const lightTheme = {
     icon: '145, 145, 145',
     constants: {
         darkText: '4,4,4', //dark blue
-        lightText: '238,238,238', //light grey
+        lightText: '238,238,238', //light grey  
         colorBackground: '29,185,84', // whatsapp green
         purple: '91, 87, 115', // light whatsapp green
         yellow: '252,192,0',

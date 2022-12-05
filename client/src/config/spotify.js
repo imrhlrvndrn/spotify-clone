@@ -5,6 +5,7 @@ const spotify_client_id = 'ff7e1ec8d7d844099f07edb9265c5235';
 const redirect_uri = 'http://localhost:3000';
 //  development uri => 'https://localhost:3000';
 // production uri => 'https://spotify-clone-6dddf.web.app/';
+
 const scopes = [
     'user-read-currently-playing',
     'user-read-recently-played',

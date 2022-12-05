@@ -5,15 +5,37 @@ import { lightTheme, darkTheme } from './styledcomponents/Themes';
 import { ThemeProvider } from 'styled-components';
 import { useDataLayerValue } from './DataLayer';
 import { getTokenFromResponse, spotifyInstance } from './config/spotify';
-import Login from './components/Login/Login';
+import { Login } from './components';
 import MainApp from './components/MainApp/MainApp';
+import { useSpotifyApi } from './hooks';
 
 const App = () => {
     const [themeState, setThemeState] = useState('dark');
+    const { getMe, getUserPlaylists } = useSpotifyApi();
     const [{ token, playlistId }, dispatch] = useDataLayerValue();
 
     const theme = {
         ...(themeState === 'light' ? lightTheme : darkTheme),
+        colors: {
+            background: {
+                primary: '#000',
+                secondary: '#0d0d0d',
+                ternary: '#1f1f1f',
+            },
+            text: {
+                primary: '#d8d8df',
+                secondary: '#5c5c70',
+            },
+            constants: {
+                text: {
+                    light: '#F4F4F6',
+                    dark: '#151419',
+                },
+                green: {
+                    default: '#1db954',
+                },
+            },
+        },
         breakpoints: {
             lg_tablet: '(min-width: 1024px)',
             tablet: '(max-width: 770px)',
@@ -26,7 +48,6 @@ const App = () => {
         // Set token
         const hash = getTokenFromResponse();
         window.location.hash = '';
-        // let _token = hash.access_token;
         let _token = token ? token : hash.access_token;
         console.log('access_token', _token);
 
@@ -35,15 +56,8 @@ const App = () => {
 
             spotifyInstance.setAccessToken(_token);
 
-            spotifyInstance.getMe().then((user) => {
-                dispatch({ type: 'SET_USER', user: user });
-            });
-
-            spotifyInstance.getUserPlaylists().then((playlists) => {
-                dispatch({ type: 'SET_PLAYLISTS', playlists: playlists });
-                playlistId === null &&
-                    dispatch({ type: 'SET_DETAILED_ID', detailedId: playlists?.items[0]?.id });
-            });
+            getMe();
+            getUserPlaylists();
         }
     }, []);
 

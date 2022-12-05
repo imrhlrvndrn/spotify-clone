@@ -1,4 +1,5 @@
 export const transformTrackToPlaylist = (trackArray) => {
+    console.log('transformTrackToPlaylist => ', trackArray);
     let currentPlaylist = trackArray.reduce((acc, cur) => {
         let newSong;
         if (cur?.preview_url !== null)
@@ -19,6 +20,8 @@ export const transformTrackToPlaylist = (trackArray) => {
     }, []);
     return currentPlaylist;
 };
+
+const constructMediaObjectForPage = () => {};
 
 export const transformAlbumToPlaylist = (albumData) => {
     let currentPlaylist = albumData?.tracks?.items?.reduce((acc, cur) => {

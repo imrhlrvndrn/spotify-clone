@@ -19,7 +19,7 @@ export const initialState = {
     currentPlayingSong: {},
     currentPlaylist: [],
     // ! Remove the token after development
-    token: 'BQB5pd442tYoH55XYmlGn3kITfF23FIaaFRFMqNOG_kbzcGjWWkVV8y2LucYZDhFNK0JG3TeVgALAwI7h2g0ZMsNW2lPk7SQutE_UGNHmrjGATMjo9Sghrvd_HHiOa0nAaMlVDCumx9lz3nWULT82U2WUv1Wx5qvjYgZAzsE070ilNUEw1d2IKp5LN_Qg9lGXhzUFTS5W_vcsodsV5PDuZS00VU0gqDP20nP',
+    token: '',
 };
 
 const reducer = (state, action) => {

@@ -100,7 +100,6 @@ export const Home = () => {
                             }
                             image={item?.images[0]?.url}
                             artist={item?.artists?.map((artist) => artist?.name).join(', ')}
-                            type={item?.type}
                         />
                     ))}
                 </MediaCollection>

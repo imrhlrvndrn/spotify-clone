@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import { spotifyInstance } from '../../config/spotify';
 import { useDataLayerValue } from '../../DataLayer';
-import { useWindowResize } from '../../utils';
+import { useWindowResize } from '../../hooks';
 
 // React components
 import { MediaCollection, MediaCollectionCard } from '../../components';
@@ -50,8 +49,6 @@ export const Library = ({ match }) => {
         // }
     }, [libraryState]);
 
-    console.log('Followed playlits => ', playlists);
-
     return (
         <div style={{ padding: windowSizeCalc ? '0 2rem 10rem 2rem' : '0 1rem 10rem 1rem' }}>
             {libraryState === 'playlists' && playlists?.length > 0 && (
@@ -78,10 +75,6 @@ export const Library = ({ match }) => {
                     {savedShows?.map((item) => (
                         <MediaCollectionCard
                             mutable
-                            // onClick={() => {
-                            //     dispatch({ type: 'SET_MAINAPPSTATE', state: 'show' });
-                            //     dispatch({ type: 'SET_PLAYLIST_ID', playlistId: item.show.id });
-                            // }}
                             link={`/show/${item?.id}`}
                             name={item?.name}
                             image={item?.images[0]?.url}
@@ -97,10 +90,6 @@ export const Library = ({ match }) => {
                     {followed_artists?.map((item) => (
                         <MediaCollectionCard
                             mutable
-                            // onClick={() => {
-                            //     dispatch({ type: 'SET_MAINAPPSTATE', state: 'show' });
-                            //     dispatch({ type: 'SET_PLAYLIST_ID', playlistId: item.show.id });
-                            // }}
                             link={`/artist/${item.id}`}
                             name={item?.name}
                             image={item?.images[0]?.url}
@@ -116,10 +105,6 @@ export const Library = ({ match }) => {
                     {saved_albums?.map((item) => (
                         <MediaCollectionCard
                             mutable
-                            // onClick={() => {
-                            //     dispatch({ type: 'SET_MAINAPPSTATE', state: 'show' });
-                            //     dispatch({ type: 'SET_PLAYLIST_ID', playlistId: item.show.id });
-                            // }}
                             link={`/album/${item?.id}`}
                             name={item?.name}
                             image={item?.images[0]?.url}

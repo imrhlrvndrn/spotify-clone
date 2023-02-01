@@ -1,10 +1,7 @@
 import styled from 'styled-components';
 
 export const HeroSection = styled.div`
-    padding: calc(80px + 1rem) 2rem 2rem 2rem;
-    @media ${(props) => props.theme.breakpoints.lg_tablet} {
-        min-height: 70vh;
-    }
+    padding: calc(80px + 1rem) 2rem 6rem 2rem;
 `;
 
 export const HeroSectionWrapper = styled.div`
@@ -18,16 +15,14 @@ export const HeroSectionWrapper = styled.div`
     }
 
     img {
-        min-width: 270px;
-        max-width: 270px;
-        min-height: 270px;
-        max-heigth: 270px;
+        min-width: 250px;
+        max-width: 250px;
+        min-height: 250px;
+        max-heigth: 250px;
         margin: 0 auto;
         object-fit: cover;
         box-shadow: 0 4px 60px rgba(0, 0, 0, 0.6);
         @media ${(props) => props.theme.breakpoints.lg_tablet} {
-            width: auto;
-            height: 20vw;
             margin: 0 1rem 0 0;
         }
     }
@@ -52,7 +47,7 @@ export const MediaHeroContent = styled.div`
         text-transform: capitalize;
         font-family: 'Montserrat', sans-serif;
         @media ${(props) => props.theme.breakpoints.lg_tablet} {
-            font-size: 3rem;
+            font-size: 4rem;
         }
     }
 `;

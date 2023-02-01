@@ -6,7 +6,6 @@ import { modifyTracks } from '../../utils';
 import { findTrackIndex, getRandomInt } from './usePlayer.utils';
 
 export const usePlayer = (audioRef) => {
-    const renderCount = useRef(1);
     const {
         getTrack,
         getEpisode,
@@ -33,20 +32,9 @@ export const usePlayer = (audioRef) => {
                 payload: media_tracks,
             });
         };
-        console.log('action type => ', query?.type);
         try {
             switch (query?.type) {
                 case 'playlist:track': {
-                    console.log({
-                        track: query.payload.track,
-                        queue: query.payload.queue,
-                    });
-                    setCurrentPlayerTrack((prevState) => ({
-                        ...query.payload.track,
-                        id: query?.payload?.track?.id,
-                        preview_url: query?.payload?.track?.preview_url,
-                        images: query?.payload?.track?.album?.images,
-                    }));
                     return playerDispatch({
                         type: 'UPDATE_QUEUE',
                         payload: query?.payload?.queue.map(({ track }) => ({
@@ -80,7 +68,6 @@ export const usePlayer = (audioRef) => {
 
                 case 'episode': {
                     return getEpisode(query?.id).then((episode) => {
-                        console.log('fetched Episode => ', episode);
                         updatePlayer(episode);
                     });
                 }
@@ -102,61 +89,78 @@ export const usePlayer = (audioRef) => {
     };
 
     const toggleAudioPlayPause = () => {
-        console.log('audioref => ', audioRef);
         if (!audioRef.current) return;
         if (controls?.is_playing && current_track?.preview_url) {
-            console.log('Toggled play state');
             audioRef.current.play();
         } else audioRef.current.pause();
     };
 
     const adjustVolume = () => {
         if (!audioRef.current) return;
-        if (controls?.volume > 0 && controls?.volume < 100) {
+        if (controls?.volume >= 0 && controls?.volume <= 100) {
             audioRef.current.volume = controls?.volume / 100;
-            console.log('Volume value => ', audioRef.current.volume);
+        }
+    };
+
+    const playAudio = () =>
+        playerDispatch({
+            type: 'UPDATE_CONTROLS',
+            payload: { ...controls, is_playing: true },
+        });
+
+    const pauseAudio = () =>
+        playerDispatch({
+            type: 'UPDATE_CONTROLS',
+            payload: { ...controls, is_playing: false },
+        });
+
+    const triggerRepeatModeActions = (current_track_index) => {
+        if (controls.repeat_mode === 'no_repeat') {
+            if (current_track_index > queue.length - 1 || queue.length === 1) {
+                playerDispatch({ type: 'UPDATE_CURRENT_TRACK', payload: queue?.[0] });
+            } else
+                playerDispatch({
+                    type: 'UPDATE_CURRENT_TRACK',
+                    payload: queue[current_track_index],
+                });
+            return pauseAudio();
+        } else if (controls.repeat_mode === 'repeat') {
+            if (queue.length === 1) return playAudio();
+            if (current_track_index > queue.length - 1)
+                playerDispatch({ type: 'UPDATE_CURRENT_TRACK', payload: queue[0] });
+            else
+                playerDispatch({
+                    type: 'UPDATE_CURRENT_TRACK',
+                    payload: queue[current_track_index],
+                });
+
+            return playAudio();
+        } else if (controls.repeat_mode === 'repeat_one') {
+            return playAudio();
         }
     };
 
     const skipToNext = () => {
-        let curTrackIndex = queue.findIndex((track) => track?.id === current_track?.id);
+        let current_track_index = findTrackIndex(queue, current_track);
 
-        if (!queue[curTrackIndex + 1]?.preview_url) curTrackIndex++;
-
-        if (controls.shuffle) return shufflePlayerQueue();
-        if (controls.repeat_mode === 'no_repeat') {
-            if (curTrackIndex >= queue.length - 1 || queue.length === 1) {
-                playerDispatch({ type: 'UPDATE_CURRENT_TRACK', payload: queue?.[0] });
-                return playerDispatch({
-                    type: 'UPDATE_CONTROLS',
-                    payload: {
-                        is_playing: false,
-                    },
-                });
-            } else
-                return playerDispatch({
-                    type: 'UPDATE_CURRENT_TRACK',
-                    payload: queue[curTrackIndex + 1],
-                });
-        } else if (controls.repeat_mode === 'repeat') {
-            if (queue.length === 1) return audioRef.current.play();
-            if (curTrackIndex === queue.length - 1)
-                return playerDispatch({ type: 'UPDATE_CURRENT_TRACK', payload: queue[0] });
-            else
-                return playerDispatch({
-                    type: 'UPDATE_CURRENT_TRACK',
-                    payload: queue[curTrackIndex + 1],
-                });
-        } else if (controls.repeat_mode === 'repeat_one') {
-            return audioRef.current.play();
+        for (let i = current_track_index + 1; i < queue?.length; i++) {
+            if (!queue[i]?.preview_url) continue;
+            else {
+                current_track_index = i;
+                break;
+            }
         }
+
+        if (current_track_index === queue?.length - 1) current_track_index += 1;
+        if (controls.shuffle) return shufflePlayerQueue();
+        triggerRepeatModeActions(current_track_index);
     };
 
     const skipToPrevious = () => {
-        const curTrackIndex = queue?.findIndex((track) => track?.id === current_track?.id);
+        const current_track_index = findTrackIndex(queue, current_track);
 
         if (queue.length <= 1) return;
-        if (curTrackIndex === 0)
+        if (current_track_index === 0)
             return playerDispatch({
                 type: 'UPDATE_CURRENT_TRACK',
                 payload: queue[queue?.length - 1],
@@ -164,19 +168,19 @@ export const usePlayer = (audioRef) => {
 
         return playerDispatch({
             type: 'UPDATE_CURRENT_TRACK',
-            payload: queue[curTrackIndex - 1],
+            payload: queue[current_track_index - 1],
         });
     };
 
     const shufflePlayerQueue = () => {
-        const [curTrackIndex, shuffledTrackIndex] = [
-            queue?.findIndex((track) => track?.id === current_track?.id),
+        const [current_track_index, shuffledTrackIndex] = [
+            findTrackIndex(queue, current_track),
             getRandomInt(queue?.length),
         ];
 
-        if (curTrackIndex === shuffledTrackIndex || !queue[curTrackIndex]?.preview_url)
+        if (current_track_index === shuffledTrackIndex || !queue[current_track_index]?.preview_url)
             return shufflePlayerQueue();
-        else playerDispatch({ type: 'UPDATE_CURRENT_TRACK', payload: queue[shuffledTrackIndex] });
+        else triggerRepeatModeActions(shuffledTrackIndex);
     };
 
     const changeRepeatMode = () => {
@@ -191,11 +195,7 @@ export const usePlayer = (audioRef) => {
     };
 
     useEffect(() => {
-        console.log('Render Count => ', renderCount.current);
         toggleAudioPlayPause();
-        renderCount.current++;
-        console.log('cur track in hook => ', current_track);
-        console.log('Render Count => ', renderCount.current);
     }, [controls?.is_playing, current_track?.id]);
 
     useEffect(() => {
@@ -203,7 +203,6 @@ export const usePlayer = (audioRef) => {
     }, [controls?.volume, current_track?.id]);
 
     useEffect(() => {
-        console.log('Recognised query trigger');
         (async () => await updatePlayerQueue())();
     }, [query?.id]);
 

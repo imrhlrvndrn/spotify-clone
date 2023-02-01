@@ -13,7 +13,6 @@ export {
     transformPodcastToPlaylist,
     transformTrackToPlaylist,
 } from './transformPlaylist';
-export { useWindowResize } from './useWindowResize';
 export { colorConversion } from './color.utils';
 export {
     modifyPlaylists,

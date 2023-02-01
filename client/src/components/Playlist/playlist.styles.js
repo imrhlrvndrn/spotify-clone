@@ -1,11 +1,14 @@
 import styled from 'styled-components';
 import { colorConversion } from '../../utils';
-import { IconImage } from '../Avatar/avatar.styles';
 
 export const TileContainer = styled.div`
     gap: 1rem;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
+
+    @media only screen and (max-width: 1200px) {
+        grid-template-columns: repeat(1, 1fr);
+    }
 `;
 
 export const Tile = styled.div`
@@ -21,23 +24,12 @@ export const Tile = styled.div`
             .rgbToHsl()?.hsl?.text_format};
 
     &:hover {
-        background: ${(props) => props?.theme?.colors?.background?.ternary};
-
-        ${IconImage} {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        background-color: ${(props) => props?.theme?.colors?.background?.ternary};
     }
 
     img {
         width: 80px;
         height: 80px;
-    }
-
-    ${IconImage} {
-        opacity: 0;
-        transform: translateY(10px);
-        transition: 0.4s all ease-in-out;
     }
 
     .info {

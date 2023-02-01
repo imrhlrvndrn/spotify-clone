@@ -5,8 +5,6 @@ import { EpisodeInfo, EpisodeTrack } from './episode.styles';
 export const Episode = ({ episode, addMediaTracksToQueue }) => {
     const [_, playerDispatch] = usePlayerContext();
 
-    console.log('Episode in track => ', episode);
-
     return (
         <EpisodeTrack
             onClick={() => {
@@ -26,7 +24,6 @@ export const Episode = ({ episode, addMediaTracksToQueue }) => {
                 <h2>{episode?.name}</h2>
                 <p>{episode?.description?.substring(0, 250)}</p>
                 <div className='actions'>
-                    {/* <PlayButton /> */}
                     <p>{episode?.stats || episode?.release_date || 'Sep 12 . 48min 50sec'}</p>
                 </div>
             </EpisodeInfo>

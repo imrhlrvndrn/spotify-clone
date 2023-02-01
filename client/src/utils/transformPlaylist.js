@@ -1,5 +1,4 @@
 export const transformTrackToPlaylist = (trackArray) => {
-    console.log('transformTrackToPlaylist => ', trackArray);
     let currentPlaylist = trackArray.reduce((acc, cur) => {
         let newSong;
         if (cur?.preview_url !== null)
@@ -46,9 +45,7 @@ export const transformAlbumToPlaylist = (albumData) => {
 };
 
 export const transformPlaylistToPlaylist = (playlistData) => {
-    console.log('Playlist data in the transform: ', playlistData);
     let currentPlaylist = playlistData?.tracks?.items?.reduce((acc, cur) => {
-        console.log('current data in reduce: ', cur);
         let newSong;
         if (cur?.track?.preview_url !== null) {
             newSong = {
@@ -62,19 +59,15 @@ export const transformPlaylistToPlaylist = (playlistData) => {
                 preview_url: cur?.track?.preview_url,
                 mediaType: playlistData?.type,
             };
-            console.log('new song: ', newSong);
             acc.push(newSong);
         }
         return acc;
     }, []);
-    console.log('Updated final playlist: ', currentPlaylist);
     return currentPlaylist;
 };
 
 export const transformArtistToPlaylist = (artistSongsData) => {
     let currentPlaylist = artistSongsData?.tracks?.reduce((acc, cur) => {
-        console.log('Artist transform is initiated');
-
         let newSong;
         if (cur?.preview_url !== null) {
             newSong = {
@@ -93,7 +86,6 @@ export const transformArtistToPlaylist = (artistSongsData) => {
         }
         return acc;
     }, []);
-    console.log('The track Playlist data: ', currentPlaylist);
     return currentPlaylist;
 };
 

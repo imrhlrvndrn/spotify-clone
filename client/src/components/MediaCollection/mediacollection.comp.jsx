@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { PlayIcon } from '../../react_icons';
+import { char_limit } from '../../utils';
 import { IconImage } from '../Avatar/avatar.styles';
-import PlayButton from '../PlayButton/playbutton.comp';
 
 // Styled components
 import { MediaCard, MediaCardInfo, MediaCollectionContainer } from './mediacollection.styles';
@@ -34,7 +34,6 @@ export const MediaCollectionCard = ({
 
     return (
         <MediaCard mutable={mutable ? true : false} onClick={() => history.push(link)}>
-            {/* <Link to={link}> */}
             <div className='image_wrapper'>
                 <img
                     className={image ? '' : 'dummy-image'}
@@ -44,28 +43,17 @@ export const MediaCollectionCard = ({
                     src={image ? image : '/assets/dummy-image.png'}
                     alt={name}
                 />
-                {type !== 'artist' && (
-                    <PlayButton
-                        variant='card'
-                        media={{ id, type, variables: { images: [{ url: image }] } }}
-                    />
-                )}
             </div>
             <MediaCardInfo>
-                <h2 title={name}>
-                    {name?.length >= 25 && !mutable ? `${name?.substring(0, 15)} ....` : `${name}`}
-                </h2>
+                <h2 title={name}>{char_limit(name, 15)}</h2>
                 {artist && (
                     <p title={artist}>
                         {type === 'playlist' && 'By '}
-                        {artist?.length >= 25 && !mutable
-                            ? `${artist?.substring(0, 15)} ....`
-                            : `${artist}`}
+                        {char_limit(artist, 15)}
                     </p>
                 )}
                 {enableType && <p>{type}</p>}
             </MediaCardInfo>
-            {/* </Link> */}
         </MediaCard>
     );
 };

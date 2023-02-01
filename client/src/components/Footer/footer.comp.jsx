@@ -30,7 +30,6 @@ export const Footer = () => {
     const audioRef = useRef(null);
 
     let lsPlayerControls = localStorage.getItem('playerControls');
-    console.log(lsPlayerControls);
 
     // Controls the Play/Pause action
     useEffect(() => {

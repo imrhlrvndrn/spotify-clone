@@ -13,11 +13,13 @@ export const SidebarContainer = styled.div`
     @media ${(props) => props.theme.breakpoints.lg_tablet} {
         position: relative;
         z-index: 0;
-        min-width: 270px;
         height: 100vh;
+        min-width: 270px;
         max-width: 270px;
-        padding: 1rem;
+        padding: 1rem 1rem calc(80px + 0.5rem) 1rem;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
     }
 
     img {
@@ -27,5 +29,14 @@ export const SidebarContainer = styled.div`
         width: 80%;
         height: auto;
         object-fit: contain;
+    }
+
+    a.logout {
+        margin-top: auto;
+        width: 100% !important;
+        padding: 1rem;
+        color: whitesmoke;
+        background-color: ${(props) => props?.theme?.colors?.background?.secondary};
+        border-radius: 5px;
     }
 `;

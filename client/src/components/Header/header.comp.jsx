@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 import { useDataLayerValue } from '../../DataLayer';
-import { useWindowResize } from '../../utils';
+import { useWindowResize } from '../../hooks';
 
 // Styled components
 import StyledHeader from './header.styles';

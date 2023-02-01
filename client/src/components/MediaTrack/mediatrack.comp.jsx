@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 // styled components
 import { Track, TrackInfo } from './mediatrack.styles';
@@ -21,6 +22,7 @@ export const MediaTrack = ({ order, track, addMediaTracksToQueue }) => {
         id,
         name,
         album,
+        duration_ms,
         artists,
         link = `https://open.spotify.com/track/${id}`,
         preview_url,
@@ -62,6 +64,13 @@ export const MediaTrack = ({ order, track, addMediaTracksToQueue }) => {
 
     const setTrackColor = () => (id === current_track?.id ? '#1db954' : '');
 
+    const convert_time = (duration_in_ms) => {
+        let min = Math.floor(duration_in_ms / 1000 / 60),
+            sec = Math.floor((duration_in_ms / 1000) % 60);
+
+        return `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    };
+
     useEffect(() => {}, [current_track?.id, controls?.is_playing]);
 
     return (
@@ -94,20 +103,21 @@ export const MediaTrack = ({ order, track, addMediaTracksToQueue }) => {
                             href={link}
                             style={{ color: setTrackColor() }}
                         >
-                            {char_limit(name, 50)}
+                            {char_limit(name, 30)}
                         </a>
                     </h3>
                     <p>
-                        {artists?.map((artist) => {
+                        {artists?.map((artist, index, array) => {
                             return (
-                                <a target='_blank' rel='no-referrer' href={`/artist/${artist?.id}`}>
-                                    {char_limit(artist?.name, 30)}
-                                </a>
+                                <Link to={`/artist/${artist?.id}`}>
+                                    {char_limit(artist?.name, 20)}
+                                    {array?.length - 1 === index ? '' : ', '}
+                                </Link>
                             );
                         })}
                     </p>
                 </TrackInfo>
-                <div className='timestamp'>3:14</div>
+                <div className='timestamp'>{convert_time(duration_ms)}</div>
             </div>
         </Track>
     );

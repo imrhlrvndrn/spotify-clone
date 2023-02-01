@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { getDominantColor } from '@rtcoder/dominant-color';
-import { useWindowResize } from '../../utils';
+import { useWindowResize } from '../../hooks';
 
 // styles
 import { HeroSection, HeroSectionWrapper, MediaHeroContent } from './media.styles';
 import { MediaTrack } from '..';
 import { Episode } from '../Episode/episode.comp';
+import { char_limit } from '../../utils';
 
 export const MediaHero = ({ cover_image, name, type, owner, total_tracks }) => {
     const windowSize = useWindowResize();
@@ -45,8 +46,12 @@ export const MediaHero = ({ cover_image, name, type, owner, total_tracks }) => {
                 />
                 <MediaHeroContent>
                     {windowSizeCalc && <strong>{type}</strong>}
-                    <h4 title={name}>{name}</h4>
-                    {windowSizeCalc && <p>{total_tracks} songs</p>}
+                    <h4 title={name}>{char_limit(name, 20)}</h4>
+                    {windowSizeCalc && (
+                        <p>
+                            {total_tracks} {total_tracks === 1 ? 'song' : 'songs'}
+                        </p>
+                    )}
                     {windowSizeCalcLt && (
                         <p
                             style={{
@@ -82,7 +87,6 @@ export const MediaTracksContainer = ({ tracks = [], episodes = [], addMediaTrack
                             order={index + 1}
                             track={item}
                             addMediaTracksToQueue={addMediaTracksToQueue}
-                            // detailedResponse={discover_weekly}
                         />
                     );
                 })}

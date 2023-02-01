@@ -1,6 +1,7 @@
 export {
     ShuffleIcon,
     VolumeIcon,
+    VolumeMuteIcon,
     RepeatOneIcon,
     RepeatIcon,
     RepeatDisabledIcon,

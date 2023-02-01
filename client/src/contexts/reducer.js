@@ -12,19 +12,13 @@ export const initialState = {
     },
     playlistId: null,
     media_id: null,
-    playing: false,
     item: null,
     newReleases: {},
     search: { query: '', results: {} },
-    currentPlayingSong: {},
-    currentPlaylist: [],
-    // ! Remove the token after development
     token: '',
 };
 
 const reducer = (state, action) => {
-    console.log(action);
-
     switch (action.type) {
         case 'SET_USER':
             return { ...state, user: action.user };

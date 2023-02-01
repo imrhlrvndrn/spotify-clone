@@ -13,6 +13,7 @@ export default styled.div`
     overflow: hidden;
     @media ${(props) => props?.theme?.breakpoints?.lg_tablet} {
         padding: 1rem 2rem;
+        backdrop-filter: blur(10px);
     }
 
     .header__left {

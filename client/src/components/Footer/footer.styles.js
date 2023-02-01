@@ -13,6 +13,7 @@ export const FooterContainer = styled.div`
         padding: 1rem;
         bottom: 0;
     }
+
     .footer__left {
         flex: 0.3;
         display: flex;

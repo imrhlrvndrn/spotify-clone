@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import GlobalStyles from './styledcomponents/GlobalStyles';
 import { lightTheme, darkTheme } from './styledcomponents/Themes';
 import { ThemeProvider } from 'styled-components';
@@ -49,7 +49,6 @@ const App = () => {
         const hash = getTokenFromResponse();
         window.location.hash = '';
         let _token = token ? token : hash.access_token;
-        console.log('access_token', _token);
 
         if (_token) {
             dispatch({ type: 'SET_TOKEN', token: _token });

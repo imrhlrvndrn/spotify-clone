@@ -30,8 +30,6 @@ export const Home = () => {
         // ! This dependency is required to be like this
     }, [newReleases?.albums]);
 
-    console.log('recent tracks on home page => ', savedShows);
-
     return (
         <HomePage>
             <h1 style={{ fontSize: '1.5rem', margin: '1rem 0 2rem 0' }}>Good Night, Rahul</h1>

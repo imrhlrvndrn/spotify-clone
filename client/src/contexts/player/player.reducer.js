@@ -1,9 +1,10 @@
 export const player_initial_state = {
     controls: {
         is_playing: false,
-        volume: 1,
+        volume: 5,
         shuffle: false,
-        repeat_mode: 'no_repeat',
+        repeat_mode: 'repeat',
+        muted: false,
     },
     current_track: {},
     queue: [],

@@ -1,7 +1,5 @@
 import styled from 'styled-components';
-import { fadeIn } from '../../styledcomponents/animations/animations';
 import { colorConversion } from '../../utils';
-import { IconImage } from '../Avatar/avatar.styles';
 
 export const MediaCollectionContainer = styled.div`
     margin-top: 1rem;
@@ -20,6 +18,7 @@ export const MediaCollectionContainer = styled.div`
         position: relative;
         height: max-content;
         display: flex;
+        gap: 1rem;
         flex-wrap: ${(props) => (props.mutable ? 'wrap' : 'nowrap')};
         flex-direction: ${(props) => (props.mutable ? 'column' : 'row')};
         justify-content: flex-start;
@@ -40,8 +39,6 @@ export const MediaCard = styled.div`
     min-width: 120px;
     max-width: ${(props) => (props.mutable ? '100%' : '120px')};
     max-height: ${(props) => (props.mutable ? 'auto' : '250px')};
-    margin-right: 1rem;
-    margin-bottom: ${(props) => (props.mutable ? '1rem' : '0')};
     width: 100%;
     overflow: hidden;
     cursor: pointer;
@@ -50,8 +47,6 @@ export const MediaCard = styled.div`
         min-width: 200px;
         max-width: 200px;
         max-height: ${(props) => (props.mutable ? '320px' : '300px')};
-        margin-right: 1rem;
-        margin-bottom: ${(props) => (props.mutable ? '1rem' : '0')};
         width: 100%;
         height: auto;
         border-radius: 5px;
@@ -76,6 +71,9 @@ export const MediaCard = styled.div`
         position: relative;
 
         img {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            user-select: none;
             display: block;
             width: ${(props) => (props.mutable ? '60px' : '100%')};
             height: ${(props) => (props.mutable ? '60px' : '100%')};
@@ -97,15 +95,6 @@ export const MediaCard = styled.div`
                 height: 152px;
             }
         }
-
-        ${IconImage} {
-            opacity: 0;
-        }
-    }
-
-    &:hover ${IconImage} {
-        opacity: 1;
-        animation: ${fadeIn} 0.4s ease-in-out 1 forward;
     }
 `;
 

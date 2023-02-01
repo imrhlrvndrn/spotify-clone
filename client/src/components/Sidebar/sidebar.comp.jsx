@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDataLayerValue } from '../../DataLayer';
-import { useWindowResize } from '../../utils';
+import { useWindowResize } from '../../hooks';
 
 // Styled components
 import { SidebarContainer } from './sidebar.styles';
@@ -18,6 +18,7 @@ import {
 
 // React components
 import { SidebarItems, SidebarOptions } from '../';
+import { accessUrl } from '../../config/spotify';
 
 export const Sidebar = () => {
     const [{ playlists }, dispatch] = useDataLayerValue();
@@ -65,8 +66,6 @@ export const Sidebar = () => {
         ));
     };
 
-    console.log('Sidebar Options => ', sidebarOptions);
-
     return (
         <>
             <SidebarContainer>
@@ -94,6 +93,11 @@ export const Sidebar = () => {
                             <SidebarOptions option={{ name: 'No playlists' }} />
                         )}
                     </SidebarItems>
+                )}
+                {windowSizeCalc && (
+                    <a className='logout' href={`${accessUrl}&show_dialog=true`}>
+                        Logout
+                    </a>
                 )}
             </SidebarContainer>
         </>

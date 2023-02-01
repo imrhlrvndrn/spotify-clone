@@ -31,7 +31,6 @@ export const useSpotifyApi = () => {
         },
         dispatch,
     ] = useDataLayerValue();
-    const [{ queue }, playerDispatch] = usePlayerContext();
 
     useEffect(() => {
         // if (session) {
@@ -83,11 +82,9 @@ export const useSpotifyApi = () => {
     };
 
     const fetchMedia = async ({ media_type, media_id }) => {
-        console.log('Params in fetchMedia => ', { media_type, media_id });
         switch (media_type) {
             case 'playlist': {
                 const playlist = await getPlaylist(media_id);
-                console.log('Playlist in fetchMedia => ', playlist);
 
                 return {
                     type: 'playlist',
@@ -138,7 +135,6 @@ export const useSpotifyApi = () => {
 
             case 'album': {
                 const album = await getAlbum(media_id);
-                console.log('Fetch media => ', album);
 
                 return {
                     type: 'album',
@@ -173,7 +169,6 @@ export const useSpotifyApi = () => {
                 const artist_details = await getArtist(media_id);
                 const { tracks } = await spotifyApi.getArtistTopTracks(artist_details?.id, 'in');
 
-                console.log('Artist details => ', tracks);
                 return {
                     type: 'artist',
                     name: artist_details?.name,
@@ -225,7 +220,6 @@ export const useSpotifyApi = () => {
             case 'episode': {
                 const episode = await getEpisode(media_id);
 
-                console.log('episode data => ', episode);
                 return {
                     ...episode?.[0],
                     cover_image: episode?.[0]?.images?.[0]?.url,
@@ -267,7 +261,6 @@ export const useSpotifyApi = () => {
 
     const getShowEpisodes = (showId, ...rest) =>
         spotifyApi.getShowEpisodes(showId, ...rest).then((data) => {
-            console.log('Show Episodes => ', data);
             return modifyEpisodes(data?.items);
         });
 
@@ -284,7 +277,6 @@ export const useSpotifyApi = () => {
 
     const getAlbumTracks = (albumId, variables, ...rest) =>
         spotifyApi.getAlbumTracks(albumId, ...rest).then((data) => {
-            console.log('All the album tracks => ', data);
             return modifyTracks(
                 data?.items?.map((track) => ({
                     ...track,
@@ -305,7 +297,6 @@ export const useSpotifyApi = () => {
 
     const getUserPlaylists = () =>
         spotifyApi.getUserPlaylists().then((data) => {
-            console.log('user playlists => ', data);
             dispatch({ type: 'SET_PLAYLISTS', playlists: modifyPlaylists(data?.items) });
         });
 
@@ -319,7 +310,6 @@ export const useSpotifyApi = () => {
 
     const getMySavedAlbums = () =>
         spotifyApi.getMySavedAlbums().then((data) =>
-            //console.log('Users saved albums => ', data)
             dispatch({
                 type: 'SET_SAVED_ALBUMS',
                 saved_albums: modifyAlbums(data?.items?.map((album) => album?.album)),
@@ -341,11 +331,9 @@ export const useSpotifyApi = () => {
 
     const getMyRecentlyPlayedTracks = () =>
         spotifyApi.getMyRecentlyPlayedTracks().then((data) => {
-            console.log('Recently played => ', data);
             const uniqueRecentlyPlayedTracks = removeDuplicates(
                 data.items.map(({ track }) => ({ ...track }))
             );
-            console.log('Recently played => ', uniqueRecentlyPlayedTracks);
 
             dispatch({
                 type: 'SET_RECENTLY_PLAYED_TRACKS',
@@ -367,7 +355,6 @@ export const useSpotifyApi = () => {
 
     const getNewReleases = () =>
         spotifyApi.getNewReleases().then((data) => {
-            console.log('new releases => ', data);
             dispatch({
                 type: 'SET_NEW_RELEASES',
                 newReleases: modifyAlbums(data?.albums?.items).slice(0, 6),
@@ -376,7 +363,6 @@ export const useSpotifyApi = () => {
 
     const searchMedia = (...restProps) =>
         spotifyApi.search(...restProps).then((data) => {
-            console.log('Debounced Search results => ', data);
             dispatch({
                 type: 'SET_SEARCH_RESULTS',
                 results: {

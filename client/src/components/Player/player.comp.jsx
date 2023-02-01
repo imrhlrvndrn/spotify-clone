@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { char_limit, modifyTracks } from '../../utils';
-import { useSpotifyApi, /* useTrackInfo,*/ usePlayer } from '../../hooks';
-// import { fetchCurrentPlayingTrack } from './player.utils';
-// import {
-//     themeState,
-//     playerControlsState,
-//     currentPlayerTrackState,
-//     playerQueueState,
-// } from '../../recoil';
-
-// styles
-// import { Container, Flex, Text } from '../../shared';
-// import { TrackImage } from '../Track/track.styles';
+import { char_limit } from '../../utils';
+import { usePlayer, useWindowResize } from '../../hooks';
 
 import {
     ExtendedPlayerWrapper,
@@ -25,7 +14,6 @@ import {
     Down,
     NextIcon,
     PauseIcon,
-    PlayerQueueIcon,
     PlayIcon,
     PreviousIcon,
     RepeatDisabledIcon,
@@ -33,25 +21,20 @@ import {
     RepeatOneIcon,
     ShuffleIcon,
     VolumeIcon,
+    VolumeMuteIcon,
 } from '../../react_icons';
 import { IconImage } from '../Avatar/avatar.styles';
 
 // components
 import { VolumeSlider, MediaHero } from '..';
 import { usePlayerContext } from '../../contexts';
-// import { useRouter } from 'next/router';
 
 export const Player = () => {
-    // const router = useRouter();
     const audioRef = useRef(null);
-    // const theme = useRecoilValue(themeState);
+    const _window = useWindowResize();
     const [playerVariant, setPlayerVariant] = useState('minimal');
-    const { controls, skipToNext, queue, skipToPrevious, changeRepeatMode, current_track } =
+    const { controls, skipToNext, skipToPrevious, changeRepeatMode, current_track } =
         usePlayer(audioRef);
-    const { getSpotifyAccessToken, getMyCurrentPlayingTrack } = useSpotifyApi();
-    // const [currentPlayerTrack, setCurrentPlayerTrack] = useRecoilState(currentPlayerTrackState);
-    // const setPlayerQueue = useSetRecoilState(playerQueueState);
-    // const setPlayerControls = useSetRecoilState(playerControlsState);
     const [_, playerDispatch] = usePlayerContext();
 
     const capture_accesibility_actions = () =>
@@ -76,47 +59,9 @@ export const Player = () => {
         else document.title = 'Spotify';
     }, [current_track?.name, controls?.is_playing]);
 
-    // const debouncedVolumeAdjust = useCallback(
-    //     debounce(async (volume) => {
-    //         console.log('Value of volume', volume);
-    //     }, 500),
-    //     []
-    // );
-
-    // const trackInfo = useTrackInfo();
-
-    // console.log('router object => ', router);
-
-    // console.log('Player Queue => ', queue);
-
     // useEffect(() => {
-    //     if (getSpotifyAccessToken() && !currentPlayerTrack?.id) {
-    //         getMyCurrentPlayingTrack().then((data) => {
-    //             // setPlayerControls((prevState) => ({
-    //             //     ...prevState,
-    //             //     is_playing: false,
-    //             //     volume: 20,
-    //             // }));
-    //             setPlayerQueue((prevState) => modifyTracks([data?.body?.item]));
-    //         });
-    //     }
-    // }, []);
-
-    // useEffect(() => {
-    //     if (playerQueue.length > 0) {
-    //         setCurrentPlayerTrack((prevState) =>
-    //             prevState?.preview_url
-    //                 ? {
-    //                       id: current_track?.id,
-    //                       preview_url: current_track?.preview_url,
-    //                   }
-    //                 : {
-    //                       id: playerQueue[0]?.id,
-    //                       preview_url: playerQueue[0]?.preview_url,
-    //                   }
-    //         );
-    //     }
-    // }, [playerQueue]);
+    //     if (_window?.width > 770) togglePlayerVariant(() => 'minimal');
+    // }, [_window?.width]);
 
     if (!current_track?.id) return null;
 
@@ -154,6 +99,7 @@ export const Player = () => {
                 onPlay={() => capture_accesibility_actions()}
                 ref={audioRef}
                 src={current_track?.preview_url}
+                muted={controls?.muted}
             ></audio>
         </>
     );
@@ -219,10 +165,10 @@ const PlayerControllers = ({ parameters }) => {
                     })
                 }
             >
-                <ShuffleIcon color={controls?.shuffle ? '#1db954' : 'currentColor'} size={16} />
+                <ShuffleIcon color={controls?.shuffle ? '#1db954' : 'currentColor'} size={20} />
             </IconImage>
             <IconImage hover margin='0 1rem 0 0' onClick={() => skipToPrevious()}>
-                <PreviousIcon size={16} />
+                <PreviousIcon size={20} />
             </IconImage>
             <IconImage
                 hover
@@ -245,15 +191,15 @@ const PlayerControllers = ({ parameters }) => {
                 )}
             </IconImage>
             <IconImage hover margin='0 1rem 0 0' onClick={() => skipToNext()}>
-                <NextIcon size={16} />
+                <NextIcon size={20} />
             </IconImage>
             <IconImage hover onClick={() => changeRepeatMode()}>
                 {controls?.repeat_mode === 'no_repeat' ? (
-                    <RepeatDisabledIcon size={16} />
+                    <RepeatDisabledIcon size={20} />
                 ) : controls?.repeat_mode === 'repeat' ? (
-                    <RepeatIcon size={16} />
+                    <RepeatIcon size={20} />
                 ) : controls?.repeat_mode === 'repeat_one' ? (
-                    <RepeatOneIcon size={16} />
+                    <RepeatOneIcon size={20} />
                 ) : null}
             </IconImage>
         </PlayerControls>
@@ -263,11 +209,19 @@ const PlayerControllers = ({ parameters }) => {
 const PlayerVolumeController = ({ controls, playerDispatch }) => {
     return (
         <PlayerVolumeControls>
-            <IconImage hover margin='0 1rem 0 0'>
+            {/* <IconImage hover margin='0 1rem 0 0'>
                 <PlayerQueueIcon size={20} />
-            </IconImage>
-            <IconImage margin='0 1rem 0 0'>
-                <VolumeIcon size={20} />
+            </IconImage> */}
+            <IconImage
+                onClick={() =>
+                    playerDispatch({
+                        type: 'UPDATE_CONTROLS',
+                        payload: { ...controls, muted: !controls?.muted },
+                    })
+                }
+                margin='0 1rem 0 0'
+            >
+                {controls?.muted ? <VolumeMuteIcon size={20} /> : <VolumeIcon size={20} />}
             </IconImage>
             <VolumeSlider
                 type='range'
@@ -297,11 +251,19 @@ export const ExtendedPlayer = ({ player_params }) => {
         changeRepeatMode,
         togglePlayerVariant,
     } = player_params;
-    /*
-        1. Full height & width container
-            1. Half container to display track coverimage & name
-            2. Half container to display Player controls
-    */
+
+    useEffect(() => {
+        window.addEventListener(
+            'keydown',
+            (event) => event?.key === 'Escape' && togglePlayerVariant(() => 'minimal')
+        );
+
+        return () =>
+            window.removeEventListener(
+                'keydown',
+                (event) => event?.key === 'Escape' && togglePlayerVariant(() => 'minimal')
+            );
+    }, []);
 
     return (
         <ExtendedPlayerWrapper>
@@ -321,7 +283,6 @@ export const ExtendedPlayer = ({ player_params }) => {
                     current_track?.album?.images?.[0]?.url ||
                     'https://i.scdn.co/image/ab67616d0000b273cdf7d1d8ff13c3360a8c033d'
                 }
-                // total_tracks={current_track?.total_tracks}
             />
             <PlayerControllers
                 parameters={{

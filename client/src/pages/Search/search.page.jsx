@@ -37,7 +37,6 @@ export const Search = () => {
             limit: 6,
         });
     }, [query]);
-    console.log('search query results: ', results);
 
     return (
         <SearchPage>

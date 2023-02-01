@@ -52,8 +52,10 @@ export const SidebarItemsContainer = styled.div`
 
         &.active {
             opacity: 1;
-            background-color: ${(props) => props?.theme?.colors?.background?.secondary};
-            font-weight: 800;
+            @media ${(props) => props?.theme?.breakpoints?.lg_tablet} {
+                background-color: ${(props) => props?.theme?.colors?.background?.secondary};
+                font-weight: 800;
+            }
         }
 
         &__icon {
